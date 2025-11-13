@@ -1,4 +1,4 @@
-# E2E Testing in Legacy Code
+# Acceptance Testing in Legacy Code
 
 - [Java](https://github.com/optivem/acceptance-testing-in-legacy-code-java)
 - [.NET](https://github.com/optivem/acceptance-testing-in-legacy-code-dotnet)
