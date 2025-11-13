@@ -1,8 +1,8 @@
 # Modern Acceptance Testing in Legacy Code
 
-- [Java](https://github.com/optivem/acceptance-testing-in-legacy-code-java)
-- [.NET](https://github.com/optivem/acceptance-testing-in-legacy-code-dotnet)
-- [TypeScript](https://github.com/optivem/acceptance-testing-in-legacy-code-typescript)
+- [Java](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java)
+- [.NET](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet)
+- [TypeScript](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript)
 
 ## License
 
