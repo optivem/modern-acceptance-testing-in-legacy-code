@@ -1,8 +1,28 @@
 # Modern Acceptance Testing in Legacy Code
 
-- [Java](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java)
-- [.NET](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet)
-- [TypeScript](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript)
+[Java](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java)
+
+[![commit-stage-monolith](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/commit-stage-monolith.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/commit-stage-monolith.yml)
+[![acceptance-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/acceptance-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/acceptance-stage.yml)
+[![qa-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/qa-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/qa-stage.yml)
+[![qa-signoff](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/qa-signoff.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/qa-signoff.yml)
+[![prod-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/prod-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/prod-stage.yml)
+
+[.NET](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet)
+
+[![commit-stage-monolith](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/commit-stage-monolith.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/commit-stage-monolith.yml)
+[![acceptance-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/acceptance-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/acceptance-stage.yml)
+[![qa-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/qa-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/qa-stage.yml)
+[![qa-signoff](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/qa-signoff.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/qa-signoff.yml)
+[![prod-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/prod-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/prod-stage.yml)
+
+[TypeScript](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript)
+
+[![commit-stage-monolith](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/commit-stage-monolith.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/commit-stage-monolith.yml)
+[![acceptance-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/acceptance-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/acceptance-stage.yml)
+[![qa-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/qa-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/qa-stage.yml)
+[![qa-signoff](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/qa-signoff.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/qa-signoff.yml)
+[![prod-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/prod-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/prod-stage.yml)
 
 ## License
 
