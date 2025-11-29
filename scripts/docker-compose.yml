@@ -1,0 +1,5 @@
+# Default docker-compose file for developer convenience
+# This uses the local build configuration
+
+include:
+  - docker-compose.local.yml
