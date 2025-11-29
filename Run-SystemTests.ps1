@@ -5,7 +5,10 @@ param(
 
     [switch]$TestOnly,
 
-    [int]$LogLines = 50
+    [int]$LogLines = 50,
+
+    [Parameter(Mandatory=$true)]
+    [string]$SystemTestDirectory
 )
 
 
@@ -53,7 +56,7 @@ $SystemConfig = @{
     )
 }
 
-$TestConfig = . .\Run-SystemTests.TestConfig.ps1
+$TestConfig = . "$SystemTestDirectory\Run-SystemTests.TestConfig.ps1"
 
 # Script Configuration
 $ErrorActionPreference = "Continue"
@@ -239,7 +242,7 @@ function Start-System {
 }
 
 function Test-System {
-    Execute-Command -Command $TestCommand -Path "system-test"
+    Execute-Command -Command $TestCommand -Path "$SystemTestDirectory\system-test"
 
     Write-Host ""
     Write-Host "All tests passed!" -ForegroundColor Green
@@ -292,10 +295,10 @@ try {
 } catch {
     Write-Host ""
     Write-Host "ERROR: $_" -ForegroundColor Red
-    Set-Location $InitialLocation
+    Set-Location $SystemTestDirectory
     exit 1
 }
 
 # Restore location and exit with code 0 on success
-Set-Location $InitialLocation
+Set-Location $SystemTestDirectory
 exit 0
