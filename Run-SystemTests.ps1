@@ -18,6 +18,9 @@ if ($TestOnly -and $SkipTests) {
     exit 1
 }
 
+# Constants
+$TestConfigFileName = "Run-SystemTests.Config.ps1"
+
 
 # Load configuration
 $SystemConfig = @{
@@ -60,7 +63,7 @@ $SystemConfig = @{
 # Load test configuration only if tests will be run
 if (-not $SkipTests) {
     Write-Host "Loading test configuration..." -ForegroundColor Cyan
-    $TestConfigPath = "$WorkingDirectory\Run-SystemTests.TestConfig.ps1"
+    $TestConfigPath = "$WorkingDirectory\$TestConfigFileName"
     Write-Host "Test configuration path: $TestConfigPath" -ForegroundColor Cyan
 
     if (-not (Test-Path $TestConfigPath)) {
