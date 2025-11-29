@@ -1,6 +1,7 @@
 # Modern Acceptance Testing in Legacy Code
 
 [![frontend-commit-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code/actions/workflows/frontend-commit-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code/actions/workflows/frontend-commit-stage.yml)
+[![backend-commit-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code/actions/workflows/backend-commit-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code/actions/workflows/backend-commit-stage.yml)
 
 [Java](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java)
 
