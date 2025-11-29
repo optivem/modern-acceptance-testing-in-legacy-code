@@ -1,0 +1,76 @@
+name: frontend-commit-stage
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+        - 'frontend/**'
+        - '.github/workflows/frontend-commit-stage.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+        - 'frontend/**'
+        - '.github/workflows/frontend-commit-stage.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: commit-stage-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    outputs:
+      image-latest-url: ${{ steps.publish.outputs.image-latest-url }}
+      image-digest-url: ${{ steps.publish.outputs.image-digest-url }}
+      image-created-timestamp: ${{ steps.publish.outputs.image-created-timestamp }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install Dependencies
+      run: npm install
+      working-directory: frontend
+
+    - name: Build Frontend
+      run: npm run build
+      working-directory: frontend
+
+    - name: Publish Docker Image
+      id: publish
+      uses: optivem/publish-docker-image-action@v1
+      with:
+        working-directory: frontend
+        image-name: frontend
+        registry: ghcr.io
+        registry-username: ${{ github.actor }}
+        image-namespace: ${{ github.repository }}
+        image-latest-tag: latest
+        commit-sha: ${{ github.sha }}
+        dockerfile: Dockerfile
+      env:
+        REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+  summary:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      
+    - name: Commit Stage Summary
+      uses: optivem/summarize-commit-stage-action@v1
+      with:
+        stage-result: ${{ needs.build.result }}
+        success-artifact-url: ${{ needs.build.outputs.image-latest-url }}

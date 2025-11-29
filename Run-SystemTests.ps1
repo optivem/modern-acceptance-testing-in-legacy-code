@@ -5,11 +5,18 @@ param(
 
     [switch]$TestOnly,
 
+    [switch]$SkipTests,
+
     [int]$LogLines = 50,
 
-    [Parameter(Mandatory=$true)]
-    [string]$SystemTestDirectory
+    [string]$WorkingDirectory = (Get-Location).Path
 )
+
+# Validate parameters
+if ($TestOnly -and $SkipTests) {
+    Write-Host "ERROR: Cannot use both -TestOnly and -SkipTests switches together" -ForegroundColor Red
+    exit 1
+}
 
 
 # Load configuration
@@ -56,11 +63,16 @@ $SystemConfig = @{
     )
 }
 
-$TestConfig = . "$SystemTestDirectory\Run-SystemTests.TestConfig.ps1"
+# Load test configuration only if tests will be run
+if (-not $SkipTests) {
+    $TestConfig = . "$WorkingDirectory\Run-SystemTests.TestConfig.ps1"
+    $TestCommand = $TestConfig.TestCommand
+    $TestReportPath = $TestConfig.TestReportPath
+}
 
 # Script Configuration
 $ErrorActionPreference = "Continue"
-$MaxAttempts = 10
+$MaxAttempts = 30
 $ComposeFile = if ($Mode -eq "pipeline") { "docker-compose.pipeline.yml" } else { "docker-compose.local.yml" }
 
 # Extract configuration values
@@ -69,9 +81,6 @@ $ContainerName = $SystemConfig.ContainerName
 # Extract component arrays
 $SystemComponents = $SystemConfig.SystemComponents
 $ExternalSystems = $SystemConfig.ExternalSystems
-
-$TestCommand = $TestConfig.TestCommand
-$TestReportPath = $TestConfig.TestReportPath
 
 function Execute-Command {
     param(
@@ -242,7 +251,7 @@ function Start-System {
 }
 
 function Test-System {
-    Execute-Command -Command $TestCommand -Path "$SystemTestDirectory\system-test"
+    Execute-Command -Command $TestCommand -Path "$WorkingDirectory\system-test"
 
     Write-Host ""
     Write-Host "All tests passed!" -ForegroundColor Green
@@ -288,17 +297,19 @@ try {
         Wait-ForServices
     }
 
-    Write-Heading -Text "Test System"
-    Test-System
+    if (-not $SkipTests) {
+        Write-Heading -Text "Test System"
+        Test-System
+    }
 
     Write-Heading -Text "DONE" -Color Green
 } catch {
     Write-Host ""
     Write-Host "ERROR: $_" -ForegroundColor Red
-    Set-Location $SystemTestDirectory
+    Set-Location $WorkingDirectory
     exit 1
 }
 
 # Restore location and exit with code 0 on success
-Set-Location $SystemTestDirectory
+Set-Location $WorkingDirectory
 exit 0

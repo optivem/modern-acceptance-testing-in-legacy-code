@@ -1,0 +1,23 @@
+/* Common styles shared across all pages */
+
+.notification {
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+
+.notification.success {
+    background: #e6ffed;
+    color: #0b6623;
+    border: 1px solid #b7f0c4;
+}
+
+.notification.error {
+    background: #ffe6e6;
+    color: #8b0000;
+    border: 1px solid #f5b7b7;
+}
+

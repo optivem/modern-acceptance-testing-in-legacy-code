@@ -1,0 +1,19 @@
+{
+  "name": "optivem-eshop-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Optivem eShop - Modern TypeScript UI built with Vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0"
+  },
+  "dependencies": {}
+}
+

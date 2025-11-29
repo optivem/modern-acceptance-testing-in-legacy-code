@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Optivem eShop</title>
+    <link rel="stylesheet" href="/css/common.css">
+</head>
+<body>
+    <h1>Shop</h1>
+    <nav>
+        <a href="/">← Back to Home</a>
+    </nav>
+
+    <form id="orderForm">
+        <div>
+            <label for="sku">SKU:</label>
+            <input type="text" id="sku" name="sku" aria-label="SKU" />
+        </div>
+        <div>
+            <label for="quantity">Quantity:</label>
+            <input type="text" id="quantity" name="quantity" aria-label="Quantity" inputmode="numeric" />
+        </div>
+        <div>
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" aria-label="Country" value="US" maxlength="2" />
+        </div>
+        <button type="submit" aria-label="Place Order">Place Order</button>
+    </form>
+
+    <div id="notifications" aria-live="polite"></div>
+
+    <script type="module" src="/js/place-order.js"></script>
+</body>
+</html>
+

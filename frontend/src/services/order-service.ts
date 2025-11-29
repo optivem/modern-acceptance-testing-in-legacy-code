@@ -1,0 +1,40 @@
+// Service layer for Order API operations
+
+import { fetchJson } from '../common';
+import type { PlaceOrderRequest, PlaceOrderResponse, GetOrderResponse } from '../types/api.types';
+import type { Result } from '../types/result.types';
+
+class OrderService {
+  private baseUrl: string;
+
+  constructor(baseUrl: string = '/api/orders') {
+    this.baseUrl = baseUrl;
+  }
+
+  async placeOrder(sku: string, quantity: number, country: string): Promise<Result<PlaceOrderResponse>> {
+    const requestBody: PlaceOrderRequest = { sku, quantity, country };
+
+    return fetchJson<PlaceOrderResponse>(this.baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+  }
+
+  async getOrder(orderNumber: string): Promise<Result<GetOrderResponse>> {
+    return fetchJson<GetOrderResponse>(`${this.baseUrl}/${orderNumber}`, {
+      method: 'GET'
+    });
+  }
+
+  async cancelOrder(orderNumber: string): Promise<Result<void>> {
+    return fetchJson<void>(`${this.baseUrl}/${orderNumber}/cancel`, {
+      method: 'POST'
+    });
+  }
+}
+
+export const orderService = new OrderService();
+

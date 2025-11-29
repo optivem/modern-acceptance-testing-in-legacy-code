@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - Optivem eShop</title>
+    <link rel="stylesheet" href="/css/common.css">
+</head>
+<body>
+    <h1>Order History</h1>
+    <nav>
+        <a href="/">← Back to Home</a>
+    </nav>
+
+    <form id="searchForm">
+        <div>
+            <label for="orderNumber">Order Number:</label>
+            <input type="text" id="orderNumber" name="orderNumber" aria-label="Order Number" required />
+        </div>
+        <button type="submit" aria-label="Search">Search</button>
+    </form>
+
+    <div id="notifications" aria-live="polite"></div>
+
+    <template id="orderDetailsTemplate">
+        <h2>Order Details</h2>
+        <div>
+            <label for="displayOrderNumber">Order Number:</label>
+            <input type="text" id="displayOrderNumber" aria-label="Display Order Number" readonly />
+        </div>
+        <div>
+            <label for="displaySku">SKU:</label>
+            <input type="text" id="displaySku" aria-label="Display SKU" readonly />
+        </div>
+        <div>
+            <label for="displayCountry">Country:</label>
+            <input type="text" id="displayCountry" aria-label="Display Country" readonly />
+        </div>
+        <div>
+            <label for="displayQuantity">Quantity:</label>
+            <input type="text" id="displayQuantity" aria-label="Display Quantity" readonly />
+        </div>
+        <div>
+            <label for="displayUnitPrice">Unit Price:</label>
+            <input type="text" id="displayUnitPrice" aria-label="Display Unit Price" readonly />
+        </div>
+        <div>
+            <label for="displayOriginalPrice">Original Price:</label>
+            <input type="text" id="displayOriginalPrice" aria-label="Display Original Price" readonly />
+        </div>
+        <div>
+            <label for="displayDiscountRate">Discount Rate:</label>
+            <input type="text" id="displayDiscountRate" aria-label="Display Discount Rate" readonly />
+        </div>
+        <div>
+            <label for="displayDiscountAmount">Discount Amount:</label>
+            <input type="text" id="displayDiscountAmount" aria-label="Display Discount Amount" readonly />
+        </div>
+        <div>
+            <label for="displaySubtotalPrice">Subtotal Price:</label>
+            <input type="text" id="displaySubtotalPrice" aria-label="Display Subtotal Price" readonly />
+        </div>
+        <div>
+            <label for="displayTaxRate">Tax Rate:</label>
+            <input type="text" id="displayTaxRate" aria-label="Display Tax Rate" readonly />
+        </div>
+        <div>
+            <label for="displayTaxAmount">Tax Amount:</label>
+            <input type="text" id="displayTaxAmount" aria-label="Display Tax Amount" readonly />
+        </div>
+        <div>
+            <label for="displayTotalPrice">Total Price:</label>
+            <input type="text" id="displayTotalPrice" aria-label="Display Total Price" readonly />
+        </div>
+        <div>
+            <label for="displayStatus">Status:</label>
+            <input type="text" id="displayStatus" aria-label="Display Status" readonly />
+        </div>
+        <button type="button" id="cancelButton" aria-label="Cancel Order">Cancel Order</button>
+    </template>
+
+    <div id="orderDetails"></div>
+
+    <script type="module" src="/js/order-history.js"></script>
+</body>
+</html>
+
