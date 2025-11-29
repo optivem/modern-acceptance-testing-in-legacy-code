@@ -5,9 +5,7 @@ param(
 
     [switch]$TestOnly,
 
-    [int]$LogLines = 50,
-
-    [string]$WorkingDirectory = $null
+    [int]$LogLines = 50
 )
 
 
@@ -151,8 +149,8 @@ function Wait-ForServices {
 function Clone-Repositories {
     foreach ($component in $SystemComponents) {
         if ($component.GitRepo) {
-            # Use provided WorkingDirectory or current location for path resolution
-            $baseDir = if ($WorkingDirectory) { $WorkingDirectory } else { Get-Location }
+            # Use current location for path resolution
+            $baseDir = Get-Location
             $repoPath = Join-Path $baseDir $component.RepoPath
             $repoPath = [System.IO.Path]::GetFullPath($repoPath)
             
