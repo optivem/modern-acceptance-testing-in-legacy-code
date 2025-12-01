@@ -13,7 +13,6 @@ param(
 # Constants
 $TestConfigFileName = "Run-SystemTests.Config.ps1"
 
-
 # Load configuration
 $SystemConfig = @{
     # Docker Configuration
@@ -81,6 +80,8 @@ $ContainerName = $SystemConfig.ContainerName
 # Extract component arrays
 $SystemComponents = $SystemConfig.SystemComponents
 $ExternalSystems = $SystemConfig.ExternalSystems
+
+$AllTestsPassed = $false
 
 function Execute-Command {
     param(
@@ -247,6 +248,8 @@ function Test-System {
     Test-System-Selected -TestType "smoke" -Command $SmokeTestCommand
 
     Test-System-Selected -TestType "e2e" -Command $E2ETestCommand
+
+    $AllTestsPassed = $true
 }
 
 function Write-Heading {
@@ -330,10 +333,18 @@ try {
     }
 
     Write-Heading -Text "DONE" -Color Green
+
+    if (-not $AllTestsPassed) {
+        Set-Location $WorkingDirectory
+        Write-Host "Some tests failed. Opening test report at: $TestReportPath" -ForegroundColor Red
+        Start-Process $TestReportPath
+
+        exit 1
+    }
 } catch {
+    Set-Location $WorkingDirectory
     Write-Host ""
     Write-Host "ERROR: $_" -ForegroundColor Red
-    Set-Location $WorkingDirectory
     exit 1
 }
 
