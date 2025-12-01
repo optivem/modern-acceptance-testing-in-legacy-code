@@ -243,6 +243,9 @@ function Test-System-Selected {
 }
 
 function Test-System {
+
+    Write-Host "Running tests in mode: $TestMode" -ForegroundColor Cyan
+
     switch ($TestMode) {
         "all" {
             Test-System-Selected -Command $TestCommand
