@@ -2,8 +2,8 @@ param(
     [ValidateSet("local", "pipeline")]
     [string]$Mode = "local",
 
-    [ValidateSet("full", "smoke", "e2e")]
-    [string]$TestMode = "full",
+    [ValidateSet("all", "smoke", "e2e")]
+    [string]$TestMode = "all",
 
     [switch]$Restart,
     [switch]$SkipTests,
@@ -244,7 +244,7 @@ function Test-System-Selected {
 
 function Test-System {
     switch ($TestMode) {
-        "full" {
+        "all" {
             Test-System-Selected -Command $TestCommand
         }
         "smoke" {
