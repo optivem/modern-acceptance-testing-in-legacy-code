@@ -5,15 +5,15 @@
 
 ## Repositories
 
-[Java](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java)
+- [Java](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java)
 
 [![acceptance-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/acceptance-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-java/actions/workflows/acceptance-stage.yml)
 
-[.NET](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet)
+- [.NET](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet)
 
 [![acceptance-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/acceptance-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-dotnet/actions/workflows/acceptance-stage.yml)
 
-[TypeScript](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript)
+- [TypeScript](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript)
 
 [![acceptance-stage](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/acceptance-stage.yml/badge.svg)](https://github.com/optivem/modern-acceptance-testing-in-legacy-code-typescript/actions/workflows/acceptance-stage.yml)
 
