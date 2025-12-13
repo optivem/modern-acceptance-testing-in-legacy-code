@@ -123,6 +123,79 @@ function Execute-Command {
     }
 }
 
+function Test-PowerShellVersion {
+    $psVersion = $PSVersionTable.PSVersion
+    
+    if ($psVersion.Major -lt 7) {
+        Write-Host "[✗] PowerShell 7+ required. Found: $($psVersion.Major).$($psVersion.Minor)" -ForegroundColor Red
+        Write-Host "    Download: https://github.com/PowerShell/PowerShell" -ForegroundColor Yellow
+        throw "PowerShell 7+ is required"
+    }
+}
+
+function Test-JavaVersion {
+    $javaOutput = & java -version 2>&1
+    $javaVersionString = ($javaOutput | Out-String)
+    
+    if (-not ($javaVersionString -match 'version "(\d+)\.')) {
+        Write-Host "[✗] Could not determine Java version" -ForegroundColor Red
+        Write-Host "    Download: https://adoptium.net/" -ForegroundColor Yellow
+        throw "Could not determine Java version"
+    }
+    
+    $javaMajor = [int]$matches[1]
+    if ($javaMajor -ne 21) {
+        Write-Host "[✗] Java 21 required. Found: Java $javaMajor" -ForegroundColor Red
+        Write-Host "    Download: https://adoptium.net/" -ForegroundColor Yellow
+        throw "Java 21 is required"
+    }
+}
+
+function Test-NodeVersion {
+    $nodeOutput = & node --version 2>&1
+    $nodeVersion = ($nodeOutput | Out-String).Trim()
+    
+    if (-not ($nodeVersion -match 'v(\d+)\.')) {
+        Write-Host "[✗] Could not determine Node version" -ForegroundColor Red
+        Write-Host "    Download: https://nodejs.org/" -ForegroundColor Yellow
+        throw "Could not determine Node version"
+    }
+    
+    $nodeMajor = [int]$matches[1]
+    if ($nodeMajor -lt 22) {
+        Write-Host "[✗] Node 22+ required. Found: Node $nodeMajor" -ForegroundColor Red
+        Write-Host "    Download: https://nodejs.org/" -ForegroundColor Yellow
+        throw "Node 22+ is required"
+    }
+}
+
+function Test-DockerDesktop {
+    $dockerOutput = & docker --version 2>&1
+    $dockerVersion = ($dockerOutput | Out-String).Trim()
+    
+    if (-not ($dockerVersion -match 'Docker version')) {
+        Write-Host "[✗] Docker Desktop not found" -ForegroundColor Red
+        Write-Host "    Download: https://www.docker.com/products/docker-desktop/" -ForegroundColor Yellow
+        throw "Docker Desktop is required"
+    }
+    
+    # Check if Docker daemon is running
+    $dockerInfo = & docker info 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "[✗] Docker daemon is not running. Please start Docker Desktop." -ForegroundColor Red
+        throw "Docker daemon is not running"
+    }
+}
+
+function Test-Prerequisites {
+    Test-PowerShellVersion
+    Test-JavaVersion
+    Test-NodeVersion
+    Test-DockerDesktop
+}
+
+
+
 function Wait-ForService {
     param(
         [string]$Url,
@@ -323,6 +396,9 @@ $InitialLocation = Get-Location
 
 # Main execution
 try {
+    Write-Heading -Text "Testing Prerequisites"
+    Test-Prerequisites
+
     if( $Restart) {
         Restart-System
     } 
