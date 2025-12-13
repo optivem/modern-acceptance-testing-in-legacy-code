@@ -19,7 +19,17 @@ export function showNotification(
   const notif = document.createElement('div');
   notif.setAttribute('role', 'alert');
   notif.className = `notification ${isError ? 'error' : 'success'}`;
-  notif.textContent = message;
+  
+  if (isError) {
+    // For error messages, use structured format matching API errors
+    const errorMessageDiv = document.createElement('div');
+    errorMessageDiv.className = 'error-message';
+    errorMessageDiv.textContent = message;
+    notif.appendChild(errorMessageDiv);
+  } else {
+    // For success messages, use simple text
+    notif.textContent = message;
+  }
 
   notificationsDiv.appendChild(notif);
 
@@ -33,16 +43,42 @@ export function showNotification(
 }
 
 /**
- * Displays an error from a failed API Result using showNotification.
- * Formats the error message including any field-level validation errors.
+ * Displays an error from a failed API Result.
+ * Shows general error message first, then field-level errors below if present.
+ * Each field error is displayed as "fieldName: error message"
  *
  * @param error The ApiError from a failed Result
  */
 export function showApiError(error: ApiError): void {
-  const errorMessage = error.fieldErrors
-    ? `${error.message}\n${error.fieldErrors.join('\n')}`
-    : error.message;
-  showNotification(errorMessage, true);
+  const notificationsDiv = document.getElementById('notifications');
+  if (!notificationsDiv) {
+    console.error('Notification container not found: notifications');
+    return;
+  }
+
+  notificationsDiv.innerHTML = '';
+
+  const notif = document.createElement('div');
+  notif.setAttribute('role', 'alert');
+  notif.className = 'notification error';
+  
+  // Add general error message
+  const generalMessage = document.createElement('div');
+  generalMessage.className = 'error-message';
+  generalMessage.textContent = error.message;
+  notif.appendChild(generalMessage);
+  
+  // Add field-level errors if present
+  if (error.fieldErrors && error.fieldErrors.length > 0) {
+    error.fieldErrors.forEach(fieldError => {
+      const fieldErrorDiv = document.createElement('div');
+      fieldErrorDiv.className = 'field-error';
+      fieldErrorDiv.textContent = fieldError;
+      notif.appendChild(fieldErrorDiv);
+    });
+  }
+
+  notificationsDiv.appendChild(notif);
 }
 
 /**
@@ -145,5 +181,3 @@ export async function extractApiError(response: Response): Promise<ApiError> {
     status: response.status
   };
 }
-
-

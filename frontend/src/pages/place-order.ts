@@ -1,6 +1,6 @@
 // UI Controller for Place Order page
 
-import { showNotification, handleResult, showSuccessNotification } from '../common';
+import { showApiError, handleResult, showSuccessNotification } from '../common';
 import { orderService } from '../services/order-service';
 import type { OrderFormData } from '../types/form.types';
 
@@ -49,46 +49,50 @@ function collectFormData(): OrderFormData {
   };
 }
 
+interface ValidationError {
+  field: string;
+  message: string;
+}
+
 function validateFormData(data: OrderFormData): boolean {
   const notificationsDiv = document.getElementById('notifications');
   if (notificationsDiv) {
     notificationsDiv.innerHTML = '';
   }
 
+  const errors: ValidationError[] = [];
   const quantityTrimmed = data.quantityValue.trim();
 
   if (!data.sku) {
-    showNotification('SKU must not be empty', true);
-    return false;
+    errors.push({ field: 'sku', message: 'SKU must not be empty' });
   }
 
   if (quantityTrimmed === '') {
-    showNotification('Quantity must not be empty', true);
-    return false;
-  }
+    errors.push({ field: 'quantity', message: 'Quantity must not be empty' });
+  } else {
+    const quantityNum = parseFloat(quantityTrimmed);
 
-  const quantityNum = parseFloat(quantityTrimmed);
-
-  if (isNaN(quantityNum)) {
-    showNotification('Quantity must be an integer', true);
-    return false;
-  }
-
-  if (!Number.isInteger(quantityNum)) {
-    showNotification('Quantity must be an integer', true);
-    return false;
-  }
-
-  if (quantityNum <= 0) {
-    showNotification('Quantity must be positive', true);
-    return false;
+    if (isNaN(quantityNum)) {
+      errors.push({ field: 'quantity', message: 'Quantity must be an integer' });
+    } else if (!Number.isInteger(quantityNum)) {
+      errors.push({ field: 'quantity', message: 'Quantity must be an integer' });
+    } else if (quantityNum <= 0) {
+      errors.push({ field: 'quantity', message: 'Quantity must be positive' });
+    }
   }
 
   if (!data.country) {
-    showNotification('Country must not be empty', true);
+    errors.push({ field: 'country', message: 'Country must not be empty' });
+  }
+
+  if (errors.length > 0) {
+    // Format as ApiError with field errors
+    showApiError({
+      message: 'The request contains one or more validation errors',
+      fieldErrors: errors.map(e => `${e.field}: ${e.message}`)
+    });
     return false;
   }
 
   return true;
 }
-

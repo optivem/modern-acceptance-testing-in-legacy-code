@@ -69,7 +69,7 @@ public class OrderService {
     private BigDecimal getUnitPrice(String sku) {
         var productDetails = erpGateway.getProductDetails(sku);
         if (productDetails.isEmpty()) {
-            throw new ValidationException("Product does not exist for SKU: " + sku);
+            throw new ValidationException("sku", "Product does not exist for SKU: " + sku);
         }
 
         return productDetails.get().getPrice();

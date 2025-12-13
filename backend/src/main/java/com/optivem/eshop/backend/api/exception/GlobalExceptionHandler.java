@@ -44,17 +44,39 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private String internalServerErrorTypeUri;
 
 
-    @ExceptionHandler(ValidationException.class)
+        @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ProblemDetail> handleValidationException(ValidationException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                ex.getMessage()
-        );
-        problemDetail.setType(URI.create(validationErrorTypeUri));
-        problemDetail.setTitle("Validation Error");
-        problemDetail.setProperty("timestamp", Instant.now());
+        if (ex.getFieldName() != null) {
+            // Field-level validation error
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "The request contains one or more validation errors"
+            );
+            problemDetail.setType(URI.create(validationErrorTypeUri));
+            problemDetail.setTitle("Validation Error");
+            problemDetail.setProperty("timestamp", Instant.now());
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problemDetail);
+            // Add field-level error
+            List<Map<String, Object>> errors = new ArrayList<>();
+            Map<String, Object> errorDetail = new HashMap<>();
+            errorDetail.put("field", ex.getFieldName());
+            errorDetail.put("message", ex.getMessage());
+            errors.add(errorDetail);
+            problemDetail.setProperty("errors", errors);
+
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problemDetail);
+        } else {
+            // General validation error
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    ex.getMessage()
+            );
+            problemDetail.setType(URI.create(validationErrorTypeUri));
+            problemDetail.setTitle("Validation Error");
+            problemDetail.setProperty("timestamp", Instant.now());
+
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problemDetail);
+        }
     }
 
     @ExceptionHandler(NotExistValidationException.class)
