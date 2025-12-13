@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.net.URI;
 import java.time.Instant;
@@ -25,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("(com\\.optivem\\.eshop\\.backend\\.core\\.dtos\\.[^\\[\\]\"\\s\\)]+)");
@@ -69,8 +70,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ProblemDetail> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                   org.springframework.http.HttpHeaders headers,
+                                                                   org.springframework.http.HttpStatusCode status,
+                                                                   org.springframework.web.context.request.WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 "The request contains one or more validation errors"
@@ -91,23 +95,32 @@ public class GlobalExceptionHandler {
         });
         problemDetail.setProperty("errors", errors);
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problemDetail);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((Object) problemDetail);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ProblemDetail> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        log.debug("HttpMessageNotReadableException: {}", ex.getMessage());
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                   org.springframework.http.HttpHeaders headers,
+                                                                   org.springframework.http.HttpStatusCode status,
+                                                                   org.springframework.web.context.request.WebRequest request) {
+        System.out.println("=== HttpMessageNotReadableException ===");
+        System.out.println("Message: " + ex.getMessage());
+        log.error("HttpMessageNotReadableException: {}", ex.getMessage(), ex);
+        
+        if (ex.getCause() != null) {
+            System.out.println("Cause: " + ex.getCause().getMessage());
+            log.error("Root cause: {}", ex.getCause().getMessage(), ex.getCause());
+        }
 
         ProblemDetail problemDetail = tryParseFieldError(ex.getMessage());
         if (problemDetail != null) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problemDetail);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((Object) problemDetail);
         }
 
         if (ex.getCause() != null) {
-            log.debug("Root cause: {}", ex.getCause().getMessage());
             problemDetail = tryParseFieldError(ex.getCause().getMessage());
             if (problemDetail != null) {
-                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problemDetail);
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((Object) problemDetail);
             }
         }
 
@@ -119,7 +132,7 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Bad Request");
         problemDetail.setProperty("timestamp", Instant.now());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((Object) problemDetail);
     }
 
     private ProblemDetail tryParseFieldError(String message) {
@@ -135,20 +148,32 @@ public class GlobalExceptionHandler {
 
         // Extract field validation messages from the DTO class annotations
         Map<String, String> fieldErrorPatterns = TypeValidationMessageExtractor.extractFieldMessages(dtoClass);
-
         String lowerMessage = message.toLowerCase();
 
         return fieldErrorPatterns.entrySet().stream()
                 .filter(entry -> lowerMessage.contains(entry.getKey()))
                 .findFirst()
                 .map(entry -> {
+                    String fieldName = entry.getKey();
+                    String fieldMessage = entry.getValue();
+                    
                     ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                             HttpStatus.UNPROCESSABLE_ENTITY,
-                            entry.getValue()
+                            "The request contains one or more validation errors"
                     );
                     problemDetail.setType(URI.create(validationErrorTypeUri));
                     problemDetail.setTitle("Validation Error");
                     problemDetail.setProperty("timestamp", Instant.now());
+                    
+                    // Add field-level error
+                    List<Map<String, Object>> errors = new ArrayList<>();
+                    Map<String, Object> errorDetail = new HashMap<>();
+                    errorDetail.put("field", fieldName);
+                    errorDetail.put("message", fieldMessage);
+                    errorDetail.put("code", "TYPE_MISMATCH");
+                    errors.add(errorDetail);
+                    problemDetail.setProperty("errors", errors);
+                    
                     return problemDetail;
                 })
                 .orElse(null);
@@ -170,6 +195,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGeneralException(Exception ex) {
+        System.out.println("=== General Exception ===");
+        System.out.println("Type: " + ex.getClass().getName());
+        System.out.println("Message: " + ex.getMessage());
         log.error("Unexpected error occurred", ex);
 
         // Log the full cause chain
@@ -207,4 +235,3 @@ public class GlobalExceptionHandler {
         return cause.getMessage();
     }
 }
-

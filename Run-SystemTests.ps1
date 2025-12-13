@@ -72,7 +72,7 @@ if (-not $SkipTests) {
 
 # Script Configuration
 $ErrorActionPreference = "Continue"
-$MaxAttempts = 30
+$MaxAttempts = 10
 $ComposeFile = if ($Mode -eq "pipeline") { "docker-compose.pipeline.yml" } else { "docker-compose.local.yml" }
 
 # Extract configuration values
