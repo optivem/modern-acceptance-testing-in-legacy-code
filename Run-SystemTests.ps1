@@ -2,6 +2,8 @@ param(
     [ValidateSet("local", "pipeline")]
     [string]$Mode = "local",
 
+    [string]$TestId,
+
     [switch]$Restart,
     [switch]$SkipTests,
 
@@ -322,7 +324,18 @@ function Test-System-Selected {
 }
 
 function Test-System {
-    foreach ($test in $Tests) {
+    $testsToRun = $Tests
+
+    # Filter by TestId if specified
+    if ($TestId) {
+        $testsToRun = $Tests | Where-Object { $_.Id -eq $TestId }
+        if (-not $testsToRun) {
+            $availableIds = ($Tests | ForEach-Object { $_.Id }) -join ", "
+            throw "Test with ID '$TestId' not found. Available IDs: $availableIds"
+        }
+    }
+
+    foreach ($test in $testsToRun) {
         Test-System-Selected -Test $test
     }
 }
