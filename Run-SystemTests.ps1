@@ -272,7 +272,16 @@ function Stop-System {
 }
 
 function Start-System {
-    Execute-Command -Command "docker compose -f $ComposeFile up -d --build"
+    param(
+        [switch]$ForceBuild
+    )
+
+    if ($ForceBuild) {
+        Write-Host "Force rebuilding images with no cache..." -ForegroundColor Yellow
+        Execute-Command -Command "docker compose -f $ComposeFile build --no-cache"
+    }
+
+    Execute-Command -Command "docker compose -f $ComposeFile up -d"
 
     Write-Host ""
     Write-Host "System Components:" -ForegroundColor Cyan
@@ -390,6 +399,10 @@ function Rebuild-System {
 }
 
 function Restart-System {
+    param(
+        [switch]$ForceBuild
+    )
+
     Write-Heading -Text "Build System"
     Build-System
 
@@ -397,7 +410,7 @@ function Restart-System {
     Stop-System
 
     Write-Heading -Text "Start System"
-    Start-System
+    Start-System -ForceBuild:$ForceBuild
 
     Write-Heading -Text "Wait for System"
     Wait-ForServices
@@ -413,10 +426,9 @@ try {
 
     if($Rebuild) {
         Rebuild-System
-        $Restart = $true
+        Restart-System -ForceBuild
     }
-
-    if( $Restart) {
+    elseif($Restart) {
         Restart-System
     } 
     else {
