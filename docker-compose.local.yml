@@ -1,37 +1,24 @@
 services:
 
-  frontend:
+  frontend-base:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "3001:3000"
-    environment:
-      - BACKEND_API_URL=http://backend:8080
-    depends_on:
-      - backend
 
-  backend:
+  backend-base:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "8081:8080"
     environment:
       - POSTGRES_URL=jdbc:postgresql://postgres:5432/eshop
       - POSTGRES_USERNAME=eshop_user
       - POSTGRES_PASSWORD=eshop_password
-      - ALLOWED_ORIGINS=http://localhost:3001,http://frontend:3000
-      - ERP_API_URL=${ERP_API_URL:-http://external:9000/erp/api}
-      - TAX_API_URL=${TAX_API_URL:-http://external:9000/tax/api}
     depends_on:
       postgres:
         condition: service_healthy
 
   postgres:
     image: postgres:16-alpine
-    ports:
-      - "5401:5432"
     environment:
       - POSTGRES_DB=eshop
       - POSTGRES_USER=eshop_user
@@ -44,23 +31,5 @@ services:
       timeout: 5s
       retries: 5
 
-  external:
-    image: node:18-alpine
-    ports:
-      - "9001:9000"
-    volumes:
-      - ./external:/app
-    working_dir: /app
-    command: sh -c "npm install && npm start"
-
-  external-stub:
-    image: wiremock/wiremock:3.10.0
-    ports:
-      - "9002:8080"
-    volumes:
-      - ./external-stub:/home/wiremock
-    command: --verbose --global-response-templating
-
 volumes:
   postgres-data:
-

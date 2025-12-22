@@ -1,5 +1,6 @@
 # Default docker-compose file for developer convenience
-# This uses the local build configuration
+# This uses the local build configuration with real external APIs
 
 include:
   - docker-compose.local.yml
+  - docker-compose.local.real.yml

@@ -1,0 +1,55 @@
+name: modern-acceptance-testing-stub
+
+services:
+
+  frontend:
+    extends:
+      file: docker-compose.local.yml
+      service: frontend-base
+    ports:
+      - "3002:3000"
+    environment:
+      - BACKEND_API_URL=http://backend:8080
+    depends_on:
+      - backend
+
+  backend:
+    extends:
+      file: docker-compose.local.yml
+      service: backend-base
+    ports:
+      - "8082:8080"
+    environment:
+      - ALLOWED_ORIGINS=http://localhost:3002,http://frontend:3000
+      - ERP_API_URL=http://external-stub:8080/erp/api
+      - TAX_API_URL=http://external-stub:8080/tax/api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      external-stub:
+        condition: service_started
+
+  external-stub:
+    image: wiremock/wiremock:3.10.0
+    ports:
+      - "9002:8080"
+    volumes:
+      - ./external-stub:/home/wiremock
+    command: --verbose --global-response-templating
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=eshop
+      - POSTGRES_USER=eshop_user
+      - POSTGRES_PASSWORD=eshop_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eshop_user -d eshop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:

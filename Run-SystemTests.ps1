@@ -19,42 +19,57 @@ param(
 # Constants
 $TestConfigFileName = "Run-SystemTests.Config.ps1"
 
-# Load configuration
+# Load configuration - keyed by ExternalMode
 $SystemConfig = @{
-    # Docker Configuration
-    ContainerName = "modern-acceptance-testing-in-legacy-code"
+    "real" = @{
+        # Docker Configuration - project name prefix
+        ContainerName = "modern-acceptance-testing-real"
 
-    # System Components (our application services)
-    SystemComponents = @(
-        @{ Name = "Frontend";
-            Url = "http://localhost:3001";
-            ContainerName = "frontend";
-            BuildPath = "frontend";
-            InstallCommand = "npm install";
-            BuildCommand = "npm run build" }
-        @{ Name = "Backend API";
-            Url = "http://localhost:8081/health";
-            ContainerName = "backend";
-            BuildPath = "backend";
-            InstallCommand = $null;
-            BuildCommand = "& .\gradlew.bat clean build" }
-    )
+        # System Components (our application services)
+        SystemComponents = @(
+            @{ Name = "Frontend";
+                Url = "http://localhost:3001";
+                ContainerName = "frontend" }
+            @{ Name = "Backend API";
+                Url = "http://localhost:8081/health";
+                ContainerName = "backend" }
+        )
 
-    # External Systems (third-party/mock APIs)
-    ExternalSystems = @(
-        @{ Name = "ERP API";
-            Url = "http://localhost:9001/erp/health";
-            ContainerName = "external" }
-        @{ Name = "Tax API";
-            Url = "http://localhost:9001/tax/health";
-            ContainerName = "external" }
-        @{ Name = "ERP API (Stub)";
-            Url = "http://localhost:9002/erp/health";
-            ContainerName = "external-stub" }
-        @{ Name = "Tax API (Stub)";
-            Url = "http://localhost:9002/tax/health";
-            ContainerName = "external-stub" }
-    )
+        # External Systems (third-party APIs)
+        ExternalSystems = @(
+            @{ Name = "ERP API (Real)";
+                Url = "http://localhost:9001/erp/health";
+                ContainerName = "external-real" }
+            @{ Name = "Tax API (Real)";
+                Url = "http://localhost:9001/tax/health";
+                ContainerName = "external-real" }
+        )
+    }
+
+    "stub" = @{
+        # Docker Configuration - project name prefix
+        ContainerName = "modern-acceptance-testing-stub"
+
+        # System Components (our application services)
+        SystemComponents = @(
+            @{ Name = "Frontend";
+                Url = "http://localhost:3002";
+                ContainerName = "frontend" }
+            @{ Name = "Backend API";
+                Url = "http://localhost:8082/health";
+                ContainerName = "backend" }
+        )
+
+        # External Systems (WireMock)
+        ExternalSystems = @(
+            @{ Name = "ERP API (Stub)";
+                Url = "http://localhost:9002/erp/health";
+                ContainerName = "external-stub" }
+            @{ Name = "Tax API (Stub)";
+                Url = "http://localhost:9002/tax/health";
+                ContainerName = "external-stub" }
+        )
+    }
 }
 
 # Load test configuration only if tests will be run
@@ -76,14 +91,17 @@ if (-not $SkipTests) {
 # Script Configuration
 $ErrorActionPreference = "Continue"
 $MaxAttempts = 10
-$ComposeFile = if ($Mode -eq "pipeline") { "docker-compose.pipeline.yml" } else { "docker-compose.local.yml" }
+$ComposeFile = if ($Mode -eq "pipeline") { 
+    "docker-compose.pipeline.yml" 
+} else { 
+    "docker-compose.local.$ExternalMode.yml"
+}
 
-# Extract configuration values
-$ContainerName = $SystemConfig.ContainerName
-
-# Extract component arrays
-$SystemComponents = $SystemConfig.SystemComponents
-$ExternalSystems = $SystemConfig.ExternalSystems
+# Extract configuration values based on ExternalMode
+$ModeConfig = $SystemConfig[$ExternalMode]
+$ContainerName = $ModeConfig.ContainerName
+$SystemComponents = $ModeConfig.SystemComponents
+$ExternalSystems = $ModeConfig.ExternalSystems
 
 function Execute-Command {
     param(
@@ -130,42 +148,6 @@ function Test-PowerShellVersion {
     }
 }
 
-function Test-JavaVersion {
-    $javaOutput = & java -version 2>&1
-    $javaVersionString = ($javaOutput | Out-String)
-    
-    if (-not ($javaVersionString -match 'version "(\d+)\.')) {
-        Write-Host "[✗] Could not determine Java version" -ForegroundColor Red
-        Write-Host "    Download: https://adoptium.net/" -ForegroundColor Yellow
-        throw "Could not determine Java version"
-    }
-    
-    $javaMajor = [int]$matches[1]
-    if ($javaMajor -ne 21) {
-        Write-Host "[✗] Java 21 required. Found: Java $javaMajor" -ForegroundColor Red
-        Write-Host "    Download: https://adoptium.net/" -ForegroundColor Yellow
-        throw "Java 21 is required"
-    }
-}
-
-function Test-NodeVersion {
-    $nodeOutput = & node --version 2>&1
-    $nodeVersion = ($nodeOutput | Out-String).Trim()
-    
-    if (-not ($nodeVersion -match 'v(\d+)\.')) {
-        Write-Host "[✗] Could not determine Node version" -ForegroundColor Red
-        Write-Host "    Download: https://nodejs.org/" -ForegroundColor Yellow
-        throw "Could not determine Node version"
-    }
-    
-    $nodeMajor = [int]$matches[1]
-    if ($nodeMajor -lt 22) {
-        Write-Host "[✗] Node 22+ required. Found: Node $nodeMajor" -ForegroundColor Red
-        Write-Host "    Download: https://nodejs.org/" -ForegroundColor Yellow
-        throw "Node 22+ is required"
-    }
-}
-
 function Test-DockerDesktop {
     $dockerOutput = & docker --version 2>&1
     $dockerVersion = ($dockerOutput | Out-String).Trim()
@@ -186,8 +168,6 @@ function Test-DockerDesktop {
 
 function Test-Prerequisites {
     Test-PowerShellVersion
-    Test-JavaVersion
-    Test-NodeVersion
     Test-DockerDesktop
 }
 
@@ -207,8 +187,8 @@ function Set-ExternalApiUrls {
         Write-Host "External mode: REAL" -ForegroundColor Green
     }
     
-    Write-Host "  ERP_API_URL: $env:ERP_API_URL" -ForegroundColor Gray
-    Write-Host "  TAX_API_URL: $env:TAX_API_URL" -ForegroundColor Gray
+    Write-Host \"  ERP_API_URL: $env:ERP_API_URL\" -ForegroundColor Gray
+    Write-Host \"  TAX_API_URL: $env:TAX_API_URL\" -ForegroundColor Gray
 }
 
 function Wait-ForService {
@@ -256,36 +236,15 @@ function Wait-ForServices {
     Write-Host "All services are ready!" -ForegroundColor Green
 }
 
-function Build-System {
-    if ($Mode -eq "local") {
-
-        foreach ($component in $SystemComponents) {
-            if ($component.InstallCommand) {
-                Write-Host "Installing dependencies for $($component.Name)..." -ForegroundColor Cyan
-                Execute-Command -Command $component.InstallCommand -Path $component.BuildPath
-                Write-Host "Dependencies installed for $($component.Name)" -ForegroundColor Green
-            }
-        }
-
-        foreach ($component in $SystemComponents) {
-            if ($component.BuildCommand) {
-                Write-Host "Building $($component.Name)..." -ForegroundColor Cyan
-                Execute-Command -Command $component.BuildCommand -Path $component.BuildPath
-            }
-        }
-    } else {
-        Write-Host "Pipeline mode: Skipping build (using pre-built Docker images)" -ForegroundColor Cyan
-    }
-}
-
 function Stop-System {
-    Execute-Command -Command "docker compose -f docker-compose.local.yml down 2>`$null"
-    Execute-Command -Command "docker compose -f docker-compose.pipeline.yml down 2>`$null"
+    Execute-Command -Command "docker compose -f $ComposeFile down 2>`$null"
 
-    $ProjectContainers = Execute-Command -Command "docker ps -aq --filter 'name=$ContainerName' 2>`$null"
-    if ($ProjectContainers) {
-        Execute-Command -Command "docker stop $ProjectContainers 2>`$null"
-        Execute-Command -Command "docker rm -f $ProjectContainers 2>`$null"
+    # Stop containers by project name
+    $Containers = docker ps -aq --filter "name=$ContainerName" 2>$null
+    
+    if ($Containers) {
+        Execute-Command -Command "docker stop $Containers 2>`$null"
+        Execute-Command -Command "docker rm -f $Containers 2>`$null"
     }
 
     # Wait to ensure containers are fully stopped and ports are released
@@ -414,18 +373,10 @@ function Test-SystemRunning {
 }
 
 
-function Rebuild-System {
-    Write-Heading -Text "Build System"
-    Build-System
-}
-
 function Restart-System {
     param(
         [switch]$ForceBuild
     )
-
-    Write-Heading -Text "Build System"
-    Build-System
 
     Write-Heading -Text "Stop System"
     Stop-System
@@ -449,7 +400,6 @@ try {
     Set-ExternalApiUrls -ExternalMode $ExternalMode
 
     if($Rebuild) {
-        Rebuild-System
         Restart-System -ForceBuild
     }
     elseif($Restart) {
@@ -460,7 +410,7 @@ try {
         $systemRunning = Test-SystemRunning
         
         if ($systemRunning) {
-            Write-Host "System is already running, skipping build and start steps" -ForegroundColor Yellow
+            Write-Host "System is already running, skipping restart" -ForegroundColor Yellow
         } else {
             Restart-System
         }
