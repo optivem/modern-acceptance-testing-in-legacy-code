@@ -2,6 +2,8 @@ param(
     [ValidateSet("local", "pipeline")]
     [string]$Mode = "local",
 
+    [string]$TestId,
+
     [switch]$Restart,
     [switch]$SkipTests,
 
@@ -64,10 +66,7 @@ if (-not $SkipTests) {
     }
 
     $TestConfig = . $TestConfigPath
-    $TestInstallCommands = $TestConfig.TestInstallCommands
-    $SmokeTestCommand = $TestConfig.SmokeTestCommand
-    $E2ETestCommand = $TestConfig.E2ETestCommand
-    $TestReportPath = Join-Path "$WorkingDirectory\system-test" $TestConfig.TestReportPath
+    $Tests = $TestConfig.Tests
 }
 
 # Script Configuration
@@ -98,13 +97,9 @@ function Execute-Command {
 
         Write-Host "Executing: $Command" -ForegroundColor Cyan
 
-        $output = Invoke-Expression $Command 2>&1
+        # Execute command with real-time output streaming
+        Invoke-Expression $Command
         $exitCode = $LASTEXITCODE
-
-        # Display the output
-        if ($output) {
-            $output | ForEach-Object { Write-Host $_ }
-        }
 
         if ($exitCode -ne 0 -and $null -ne $exitCode) {
             Write-Host ""
@@ -113,8 +108,6 @@ function Execute-Command {
             Write-Host "Command failed with exit code: $exitCode" -ForegroundColor Red
             throw "Failed to execute command: $Command (Exit Code: $exitCode)"
         }
-
-        return $output
 
     } finally {
         if ($Path) {
@@ -297,42 +290,54 @@ function Start-System {
 
 function Test-System-Selected {
     param(
-        [string]$TestType,
-        [string]$Command
+        [hashtable]$Test
     )
 
-    Write-Host "Running $TestType tests..." -ForegroundColor Cyan
+    $TestName = $Test.Name
+    $TestCommand = $Test.Command
+    $TestPath = Join-Path $WorkingDirectory $Test.Path
+    $TestReportPath = Join-Path $WorkingDirectory $Test.TestReportPath
+    $TestInstallCommands = $Test.TestInstallCommands
+
+    Write-Host "Running $TestName..." -ForegroundColor Cyan
+
+    # Install test dependencies if specified
+    if ($null -ne $TestInstallCommands) {
+        foreach ($installCommand in $TestInstallCommands) {
+            Write-Host "Installing test dependencies: $installCommand" -ForegroundColor Cyan
+            Execute-Command -Command $installCommand -Path $TestPath
+        }
+    }
 
     try 
     {
-        Execute-Command -Command $Command -Path "$WorkingDirectory\system-test"
+        Execute-Command -Command $TestCommand -Path $TestPath
 
         Write-Host ""
-        Write-Host "All $TestType tests passed!" -ForegroundColor Green
+        Write-Host "All $TestName passed!" -ForegroundColor Green
     } catch {
         Write-Host ""
-        Write-Host "Some $TestType tests failed." -ForegroundColor Red
+        Write-Host "Some $TestName failed." -ForegroundColor Red
         Write-Host "Test report: $TestReportPath"
         throw
     }
 }
 
 function Test-System {
-    
-    if($null -ne $TestInstallCommands) {
-        Write-Host "Installing test dependencies..." -ForegroundColor Cyan
+    $testsToRun = $Tests
 
-        # Install test dependencies
-        foreach ($installCommand in $TestInstallCommands) { 
-            Write-Host "Installing test dependencies with command: $installCommand" -ForegroundColor Cyan
-            Execute-Command -Command $installCommand -Path "$WorkingDirectory\system-test"
+    # Filter by TestId if specified
+    if ($TestId) {
+        $testsToRun = $Tests | Where-Object { $_.Id -eq $TestId }
+        if (-not $testsToRun) {
+            $availableIds = ($Tests | ForEach-Object { $_.Id }) -join ", "
+            throw "Test with ID '$TestId' not found. Available IDs: $availableIds"
         }
-    } else {
-        Write-Host "No test dependencies to install." -ForegroundColor Yellow
     }
 
-    Test-System-Selected -TestType "smoke" -Command $SmokeTestCommand
-    Test-System-Selected -TestType "e2e" -Command $E2ETestCommand
+    foreach ($test in $testsToRun) {
+        Test-System-Selected -Test $test
+    }
 }
 
 function Write-Heading {
