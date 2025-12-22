@@ -13,11 +13,8 @@ services:
       - POSTGRES_URL=jdbc:postgresql://postgres:5432/eshop
       - POSTGRES_USERNAME=eshop_user
       - POSTGRES_PASSWORD=eshop_password
-    depends_on:
-      postgres:
-        condition: service_healthy
 
-  postgres:
+  postgres-base:
     image: postgres:16-alpine
     environment:
       - POSTGRES_DB=eshop
