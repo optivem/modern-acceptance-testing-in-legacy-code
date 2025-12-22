@@ -2,6 +2,9 @@ param(
     [ValidateSet("local", "pipeline")]
     [string]$Mode = "local",
 
+    [ValidateSet("real", "stub")]
+    [string]$ExternalMode = "real",
+
     [string]$TestId,
 
     [switch]$Rebuild,
@@ -188,7 +191,25 @@ function Test-Prerequisites {
     Test-DockerDesktop
 }
 
+function Set-ExternalApiUrls {
+    param(
+        [ValidateSet("real", "stub")]
+        [string]$ExternalMode
+    )
 
+    if ($ExternalMode -eq "stub") {
+        $env:ERP_API_URL = "http://external-stub:8080/erp/api"
+        $env:TAX_API_URL = "http://external-stub:8080/tax/api"
+        Write-Host "External mode: STUB (WireMock)" -ForegroundColor Yellow
+    } else {
+        $env:ERP_API_URL = "http://external:9000/erp/api"
+        $env:TAX_API_URL = "http://external:9000/tax/api"
+        Write-Host "External mode: REAL" -ForegroundColor Green
+    }
+    
+    Write-Host "  ERP_API_URL: $env:ERP_API_URL" -ForegroundColor Gray
+    Write-Host "  TAX_API_URL: $env:TAX_API_URL" -ForegroundColor Gray
+}
 
 function Wait-ForService {
     param(
@@ -423,6 +444,9 @@ $InitialLocation = Get-Location
 try {
     Write-Heading -Text "Testing Prerequisites"
     Test-Prerequisites
+
+    Write-Heading -Text "Configure External APIs"
+    Set-ExternalApiUrls -ExternalMode $ExternalMode
 
     if($Rebuild) {
         Rebuild-System

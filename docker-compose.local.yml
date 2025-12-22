@@ -22,13 +22,11 @@ services:
       - POSTGRES_USERNAME=eshop_user
       - POSTGRES_PASSWORD=eshop_password
       - ALLOWED_ORIGINS=http://localhost:3001,http://frontend:3000
-      - ERP_API_URL=http://external:9000/erp/api
-      - TAX_API_URL=http://external:9000/tax/api
+      - ERP_API_URL=${ERP_API_URL:-http://external:9000/erp/api}
+      - TAX_API_URL=${TAX_API_URL:-http://external:9000/tax/api}
     depends_on:
       postgres:
         condition: service_healthy
-      external:
-        condition: service_started
 
   postgres:
     image: postgres:16-alpine
