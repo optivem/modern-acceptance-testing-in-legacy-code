@@ -185,12 +185,12 @@ function Set-ExternalApiUrls {
     )
 
     if ($ExternalMode -eq "stub") {
-        $env:ERP_API_URL = "http://external-stub:8080/erp/api"
-        $env:TAX_API_URL = "http://external-stub:8080/tax/api"
+        $env:ERP_API_URL = "http://external-stub:8080/erp"
+        $env:TAX_API_URL = "http://external-stub:8080/tax"
         Write-Host "External mode: STUB (WireMock)" -ForegroundColor Yellow
     } else {
-        $env:ERP_API_URL = "http://external:9000/erp/api"
-        $env:TAX_API_URL = "http://external:9000/tax/api"
+        $env:ERP_API_URL = "http://external:9000/erp"
+        $env:TAX_API_URL = "http://external:9000/tax"
         Write-Host "External mode: REAL" -ForegroundColor Green
     }
     

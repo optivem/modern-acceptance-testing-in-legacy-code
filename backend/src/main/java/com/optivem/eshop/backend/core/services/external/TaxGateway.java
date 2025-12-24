@@ -25,7 +25,7 @@ public class TaxGateway {
                     .connectTimeout(java.time.Duration.ofSeconds(10))
                     .build();
 
-            var url = taxUrl + "/countries/" + country;
+            var url = taxUrl + "/api/countries/" + country;
             var request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(java.time.Duration.ofSeconds(10))

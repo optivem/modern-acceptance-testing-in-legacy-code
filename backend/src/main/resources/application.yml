@@ -37,7 +37,12 @@ error:
     bad-request: ${error.types.base-url}/bad-request
     internal-server-error: ${error.types.base-url}/internal-server-error
 
+external:
+  system-mode: ${EXTERNAL_SYSTEM_MODE}
+
 erp:
   url: ${ERP_API_URL}
 tax:
   url: ${TAX_API_URL}
+clock:
+  url: ${CLOCK_API_URL}

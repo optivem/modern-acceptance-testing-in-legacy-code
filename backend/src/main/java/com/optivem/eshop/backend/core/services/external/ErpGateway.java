@@ -26,7 +26,7 @@ public class ErpGateway {
                     .connectTimeout(java.time.Duration.ofSeconds(10))
                     .build();
                     
-            var url = erpUrl + "/products/" + sku;
+            var url = erpUrl + "/api/products/" + sku;
             var request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(java.time.Duration.ofSeconds(10))
