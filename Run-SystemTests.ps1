@@ -91,7 +91,7 @@ if (-not $SkipTests) {
 
 # Script Configuration
 $ErrorActionPreference = "Continue"
-$MaxAttempts = 10
+$MaxAttempts = 30
 
 # Variables set by Set-CurrentMode
 $script:ComposeFile = $null
