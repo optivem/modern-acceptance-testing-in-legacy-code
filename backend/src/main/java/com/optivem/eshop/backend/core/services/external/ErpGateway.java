@@ -21,12 +21,13 @@ public class ErpGateway {
     private String erpUrl;
 
     public Optional<ProductDetailsResponse> getProductDetails(String sku) {
+        var url = erpUrl + "/api/products/" + sku;
+
         try {
             var httpClient = HttpClient.newBuilder()
                     .connectTimeout(java.time.Duration.ofSeconds(10))
                     .build();
-                    
-            var url = erpUrl + "/api/products/" + sku;
+
             var request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(java.time.Duration.ofSeconds(10))
@@ -48,7 +49,7 @@ public class ErpGateway {
             return Optional.of(result);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch product details for SKU: " + sku +
-                    " from URL: " + erpUrl + "/products/" + sku +
+                    " from URL: " + url +
                     ". Error: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
         }
     }

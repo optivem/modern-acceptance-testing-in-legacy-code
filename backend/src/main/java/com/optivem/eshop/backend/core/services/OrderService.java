@@ -46,6 +46,8 @@ public class OrderService {
         var quantity = request.getQuantity();
         var country = request.getCountry();
 
+        System.out.println("Placing order for SKU: " + sku + ", quantity: " + quantity + ", country: " + country);
+
         var orderNumber = generateOrderNumber();
         var orderTimestamp = clockGateway.getCurrentTime();
         var unitPrice = getUnitPrice(sku);

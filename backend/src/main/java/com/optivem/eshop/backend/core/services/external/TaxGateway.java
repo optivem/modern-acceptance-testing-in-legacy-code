@@ -20,12 +20,14 @@ public class TaxGateway {
     private String taxUrl;
 
     public Optional<TaxDetailsResponse> getTaxDetails(String country) {
+        var url = taxUrl + "/api/countries/" + country;
+        System.out.println("getTaxDetails - url: " + url);
+
         try {
             var httpClient = HttpClient.newBuilder()
                     .connectTimeout(java.time.Duration.ofSeconds(10))
                     .build();
 
-            var url = taxUrl + "/api/countries/" + country;
             var request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(java.time.Duration.ofSeconds(10))
@@ -34,7 +36,10 @@ public class TaxGateway {
 
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+            System.out.println("getTaxDetails - status code was: " + response.statusCode());
+
             if (response.statusCode() == 404) {
+                System.out.println("getTaxDetails - status code was 404");
                 return Optional.empty();  // Country not found
             }
 
@@ -47,7 +52,7 @@ public class TaxGateway {
             return Optional.of(result);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch tax details for country: " + country +
-                    " from URL: " + taxUrl + ". Error: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
+                    " from URL: " + url + ". Error: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
         }
     }
 }
