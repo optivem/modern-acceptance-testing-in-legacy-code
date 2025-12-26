@@ -86,6 +86,7 @@ if (-not $SkipTests) {
     }
 
     $TestConfig = . $TestConfigPath
+    $BuildCommands = $TestConfig.BuildCommands
     $Tests = $TestConfig.Tests
 }
 
@@ -265,6 +266,23 @@ function Start-System {
     }
 }
 
+function Execute-BuildCommands {
+    Write-Host "Executing build commands..." -ForegroundColor Yellow
+    
+    foreach ($buildCommand in $BuildCommands) {
+        $buildName = $buildCommand.Name
+        $command = $buildCommand.Command
+        
+        Write-Host ""
+        Write-Host "Executing: $buildName" -ForegroundColor Cyan
+        
+        Execute-Command -Command $command -Path $WorkingDirectory
+    }
+    
+    Write-Host ""
+    Write-Host "All build commands completed successfully!" -ForegroundColor Green
+}
+
 function Test-System-Selected {
     param(
         [hashtable]$Test
@@ -382,6 +400,11 @@ $InitialLocation = Get-Location
 try {
     Write-Heading -Text "Testing Prerequisites"
     Test-Prerequisites
+
+    if (-not $SkipTests) {
+        Write-Heading -Text "Build"
+        Execute-BuildCommands
+    }
 
     # Start/restart systems for each mode
     foreach ($externalMode in $ExternalModes) {
