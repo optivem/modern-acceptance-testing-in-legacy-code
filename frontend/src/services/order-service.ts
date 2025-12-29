@@ -11,8 +11,12 @@ class OrderService {
     this.baseUrl = baseUrl;
   }
 
-  async placeOrder(sku: string, quantity: number, country: string): Promise<Result<PlaceOrderResponse>> {
+  async placeOrder(sku: string, quantity: number, country: string, couponCode?: string): Promise<Result<PlaceOrderResponse>> {
     const requestBody: PlaceOrderRequest = { sku, quantity, country };
+    
+    if (couponCode && couponCode.trim() !== '') {
+      requestBody.couponCode = couponCode.trim();
+    }
 
     return fetchJson<PlaceOrderResponse>(this.baseUrl, {
       method: 'POST',

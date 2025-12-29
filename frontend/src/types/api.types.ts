@@ -10,6 +10,7 @@ export interface PlaceOrderRequest {
   sku: string;
   quantity: number;
   country: string;
+  couponCode?: string;
 }
 
 // API Response types
@@ -23,13 +24,36 @@ export interface GetOrderResponse {
   country: string;
   quantity: number;
   unitPrice: number;
-  subtotalPrice: number;
+  basePrice: number;
   discountRate: number;
   discountAmount: number;
-  preTaxTotal: number;
+  subtotalPrice: number;
   taxRate: number;
   taxAmount: number;
   totalPrice: number;
   status: OrderStatus;
+  appliedCouponCode?: string;
+}
+
+// Coupon API types
+export interface CreateCouponRequest {
+  code: string;
+  discountRate: number;
+  validFrom?: string; // ISO 8601 date string - optional (valid from now if not provided)
+  validTo?: string;   // ISO 8601 date string - optional (never expires if not provided)
+  usageLimit?: number; // Optional - if not provided, no limit
+}
+
+export interface CreateCouponResponse {
+  code: string;
+}
+
+export interface GetCouponResponse {
+  code: string;
+  discountRate: number;
+  validFrom?: string; // ISO 8601 date string
+  validTo?: string;   // ISO 8601 date string
+  usageLimit: number;
+  usedCount: number;
 }
 

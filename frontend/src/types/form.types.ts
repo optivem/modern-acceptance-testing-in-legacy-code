@@ -5,5 +5,6 @@ export interface OrderFormData {
   quantity: number;
   country: string;
   quantityValue: string;
+  couponCode?: string;
 }
 

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management - Optivem eShop</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .coupon-table th,
+        .coupon-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .coupon-table th {
+            background-color: #f2f2f2;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .form-row > div {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Coupon Management (Admin)</h1>
+    <nav>
+        <a href="/">← Back to Home</a>
+    </nav>
+
+    <h2>Create New Coupon</h2>
+    <form id="createCouponForm">
+        <div class="form-row">
+            <div>
+                <label for="code">Coupon Code:</label>
+                <input type="text" id="code" name="code" aria-label="Coupon Code" required />
+            </div>
+            <div>
+                <label for="discountRate">Discount Rate (0-1):</label>
+                <input type="number" id="discountRate" name="discountRate" aria-label="Discount Rate" 
+                       step="0.01" min="0" max="1" value="0.2" required />
+            </div>
+        </div>
+        <div class="form-row">
+            <div>
+                <label for="validFrom">Valid From (Optional):</label>
+                <input type="datetime-local" id="validFrom" name="validFrom" aria-label="Valid From" placeholder="Valid immediately" />
+            </div>
+            <div>
+                <label for="validTo">Valid To (Optional):</label>
+                <input type="datetime-local" id="validTo" name="validTo" aria-label="Valid To" placeholder="Never expires" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div>
+                <label for="usageLimit">Usage Limit (Optional):</label>
+                <input type="number" id="usageLimit" name="usageLimit" aria-label="Usage Limit" 
+                       min="1" placeholder="No limit" />
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+                <button type="submit" aria-label="Create Coupon">Create Coupon</button>
+            </div>
+        </div>
+    </form>
+
+    <h2>Existing Coupons</h2>
+    <button id="refreshButton" aria-label="Refresh Coupons">Refresh List</button>
+    <table class="coupon-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Discount Rate</th>
+                <th>Valid From</th>
+                <th>Valid To</th>
+                <th>Usage Limit</th>
+                <th>Used Count</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="couponTableBody">
+            <tr>
+                <td colspan="7" style="text-align: center;">Loading...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="notifications" aria-live="polite"></div>
+
+    <script type="module" src="/js/admin-coupons.js"></script>
+</body>
+</html>

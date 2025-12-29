@@ -18,4 +18,6 @@ public class PlaceOrderRequest {
 
     @NotBlank(message = "Country must not be empty")
     private String country;
+
+    private String couponCode;
 }

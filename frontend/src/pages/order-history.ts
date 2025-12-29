@@ -41,14 +41,15 @@ function renderOrderDetails(order: GetOrderResponse): void {
   setValue('displayCountry', order.country);
   setValue('displayQuantity', order.quantity.toString());
   setValue('displayUnitPrice', `$${order.unitPrice.toFixed(2)}`);
-  setValue('displaySubtotalPrice', `$${order.subtotalPrice.toFixed(2)}`);
+  setValue('displayBasePrice', `$${order.basePrice.toFixed(2)}`);
   setValue('displayDiscountRate', `${(order.discountRate * 100).toFixed(2)}%`);
   setValue('displayDiscountAmount', `$${order.discountAmount.toFixed(2)}`);
-  setValue('displayPreTaxTotal', `$${order.preTaxTotal.toFixed(2)}`);
+  setValue('displaySubtotalPrice', `$${order.subtotalPrice.toFixed(2)}`);
   setValue('displayTaxRate', `${(order.taxRate * 100).toFixed(2)}%`);
   setValue('displayTaxAmount', `$${order.taxAmount.toFixed(2)}`);
   setValue('displayTotalPrice', `$${order.totalPrice.toFixed(2)}`);
   setValue('displayStatus', order.status);
+  setValue('displayAppliedCouponCode', order.appliedCouponCode || 'None');
 
   const cancelBtn = content.querySelector('#cancelButton') as HTMLButtonElement;
   if (cancelBtn) {

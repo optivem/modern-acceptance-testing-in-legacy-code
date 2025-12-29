@@ -23,7 +23,7 @@ formElement?.addEventListener('submit', async function(e: Event) {
   }
 
   console.log('[Place Order] Validation passed, calling API...');
-  const result = await orderService.placeOrder(orderData.sku, orderData.quantity, orderData.country);
+  const result = await orderService.placeOrder(orderData.sku, orderData.quantity, orderData.country, orderData.couponCode);
   console.log('[Place Order] API response received:', result);
 
   handleResult(result, (order) => {
@@ -36,16 +36,19 @@ function collectFormData(): OrderFormData {
   const skuElement = document.getElementById('sku') as HTMLInputElement;
   const quantityElement = document.getElementById('quantity') as HTMLInputElement;
   const countryElement = document.getElementById('country') as HTMLInputElement;
+  const couponCodeElement = document.getElementById('couponCode') as HTMLInputElement;
 
   const skuValue = skuElement?.value ?? '';
   const quantityValue = quantityElement?.value ?? '';
   const countryValue = countryElement?.value ?? '';
+  const couponCodeValue = couponCodeElement?.value ?? '';
 
   return {
     sku: skuValue.trim(),
     quantity: parseInt(quantityValue),
     country: countryValue.trim(),
-    quantityValue: quantityValue
+    quantityValue: quantityValue,
+    couponCode: couponCodeValue.trim() || undefined
   };
 }
 

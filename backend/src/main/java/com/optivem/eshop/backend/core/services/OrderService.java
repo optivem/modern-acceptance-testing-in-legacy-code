@@ -26,45 +26,54 @@ public class OrderService {
     private static final LocalTime CANCELLATION_RESTRICTED_TIME_START = LocalTime.of(22, 0);
     private static final LocalTime CANCELLATION_RESTRICTED_TIME_END = LocalTime.of(22, 30);
 
-    private static final LocalTime ORDER_PLACEMENT_CUTOFF_TIME = LocalTime.of(17, 0);
-
     private final OrderRepository orderRepository;
     private final ErpGateway erpGateway;
     private final TaxGateway taxGateway;
     private final ClockGateway clockGateway;
+    private final CouponService couponService;
 
-    public OrderService(OrderRepository orderRepository, ErpGateway erpGateway, TaxGateway taxGateway, ClockGateway clockGateway) {
+    public OrderService(OrderRepository orderRepository, ErpGateway erpGateway, TaxGateway taxGateway, ClockGateway clockGateway, CouponService couponService) {
         this.orderRepository = orderRepository;
         this.erpGateway = erpGateway;
         this.taxGateway = taxGateway;
         this.clockGateway = clockGateway;
+        this.couponService = couponService;
     }
 
     public PlaceOrderResponse placeOrder(PlaceOrderRequest request) {
         var sku = request.getSku();
         var quantity = request.getQuantity();
         var country = request.getCountry();
+        var couponCode = request.getCouponCode();
 
         System.out.println("Placing order for SKU: " + sku + ", quantity: " + quantity + ", country: " + country);
 
         var orderNumber = generateOrderNumber();
         var orderTimestamp = clockGateway.getCurrentTime();
         var unitPrice = getUnitPrice(sku);
-        var discountRate = getDiscountRate();
+        var discountRate = getDiscountRate(couponCode);
         var taxRate = getTaxRate(country);
 
-        var subtotalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
-        var discountAmount = subtotalPrice.multiply(discountRate);
-        var preTaxTotal = subtotalPrice.subtract(discountAmount);
-        var taxAmount = preTaxTotal.multiply(taxRate);
-        var totalPrice = preTaxTotal.add(taxAmount);
+        var basePrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
+        var discountAmount = basePrice.multiply(discountRate);
+        var subtotalPrice = basePrice.subtract(discountAmount);
+        var taxAmount = subtotalPrice.multiply(taxRate);
+        var totalPrice = subtotalPrice.add(taxAmount);
+
+        var appliedCouponCode = discountRate.compareTo(BigDecimal.ZERO) > 0 ? couponCode : null;
 
         var order = new Order(orderNumber, orderTimestamp, country,
-                sku, quantity, unitPrice, subtotalPrice,
-                discountRate, discountAmount, preTaxTotal,
-                taxRate, taxAmount, totalPrice, OrderStatus.PLACED);
+                sku, quantity, unitPrice, basePrice,
+                discountRate, discountAmount, subtotalPrice,
+                taxRate, taxAmount, totalPrice, OrderStatus.PLACED,
+                appliedCouponCode);
 
         orderRepository.save(order);
+
+        // Increment coupon usage count if a coupon was applied
+        if (appliedCouponCode != null) {
+            couponService.incrementUsageCount(appliedCouponCode);
+        }
 
         var response = new PlaceOrderResponse();
         response.setOrderNumber(orderNumber);
@@ -80,15 +89,8 @@ public class OrderService {
         return productDetails.get().getPrice();
     }
 
-    private BigDecimal getDiscountRate() {
-        var now = LocalDateTime.ofInstant(clockGateway.getCurrentTime(), ZoneId.systemDefault());
-        var currentTime = now.toLocalTime();
-
-        if(currentTime.isBefore(ORDER_PLACEMENT_CUTOFF_TIME) || currentTime.equals(ORDER_PLACEMENT_CUTOFF_TIME)) {
-            return BigDecimal.ZERO;
-        }
-
-        return BigDecimal.valueOf(0.15);
+    private BigDecimal getDiscountRate(String couponCode) {
+        return couponService.getDiscount(couponCode);
     }
 
     private BigDecimal getTaxRate(String country) {
@@ -114,15 +116,16 @@ public class OrderService {
         response.setSku(order.getSku());
         response.setQuantity(order.getQuantity());
         response.setUnitPrice(order.getUnitPrice());
-        response.setSubtotalPrice(order.getSubtotalPrice());
+        response.setBasePrice(order.getBasePrice());
         response.setDiscountRate(order.getDiscountRate());
         response.setDiscountAmount(order.getDiscountAmount());
-        response.setPreTaxTotal(order.getPreTaxTotal());
+        response.setSubtotalPrice(order.getSubtotalPrice());
         response.setTaxRate(order.getTaxRate());
         response.setTaxAmount(order.getTaxAmount());
         response.setTotalPrice(order.getTotalPrice());
         response.setStatus(order.getStatus());
         response.setCountry(order.getCountry());
+        response.setAppliedCouponCode(order.getAppliedCouponCode());
 
         return response;
     }

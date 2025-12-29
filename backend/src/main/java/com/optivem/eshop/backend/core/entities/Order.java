@@ -31,8 +31,8 @@ public class Order {
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(name = "subtotal_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal subtotalPrice;
+    @Column(name = "base_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal basePrice;
 
     @Column(name = "discount_rate", nullable = false, precision = 5, scale = 4)
     private BigDecimal discountRate;
@@ -40,8 +40,8 @@ public class Order {
     @Column(name = "discount_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal discountAmount;
 
-    @Column(name = "pre_tax_total", nullable = false, precision = 10, scale = 2)
-    private BigDecimal preTaxTotal;
+    @Column(name = "subtotal_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotalPrice;
 
     @Column(name = "tax_rate", nullable = false, precision = 5, scale = 4)
     private BigDecimal taxRate;
@@ -56,10 +56,14 @@ public class Order {
     @Column(name = "status", nullable = false)
     private OrderStatus status;
 
+    @Column(name = "applied_coupon_code", nullable = true)
+    private String appliedCouponCode;
+
     public Order(String orderNumber, Instant orderTimestamp, String country,
-                 String sku, int quantity, BigDecimal unitPrice, BigDecimal subtotalPrice,
-                 BigDecimal discountRate, BigDecimal discountAmount, BigDecimal preTaxTotal,
-                 BigDecimal taxRate, BigDecimal taxAmount, BigDecimal totalPrice, OrderStatus status) {
+                 String sku, int quantity, BigDecimal unitPrice, BigDecimal basePrice,
+                 BigDecimal discountRate, BigDecimal discountAmount, BigDecimal subtotalPrice,
+                 BigDecimal taxRate, BigDecimal taxAmount, BigDecimal totalPrice, OrderStatus status,
+                 String appliedCouponCode) {
         if (orderNumber == null) {
             throw new IllegalArgumentException("orderNumber cannot be null");
         }
@@ -75,8 +79,8 @@ public class Order {
         if (unitPrice == null) {
             throw new IllegalArgumentException("unitPrice cannot be null");
         }
-        if (subtotalPrice == null) {
-            throw new IllegalArgumentException("subtotalPrice cannot be null");
+        if (basePrice == null) {
+            throw new IllegalArgumentException("basePrice cannot be null");
         }
         if (discountRate == null) {
             throw new IllegalArgumentException("discountRate cannot be null");
@@ -84,8 +88,8 @@ public class Order {
         if (discountAmount == null) {
             throw new IllegalArgumentException("discountAmount cannot be null");
         }
-        if (preTaxTotal == null) {
-            throw new IllegalArgumentException("preTaxTotal cannot be null");
+        if (subtotalPrice == null) {
+            throw new IllegalArgumentException("subtotalPrice cannot be null");
         }
         if (taxRate == null) {
             throw new IllegalArgumentException("taxRate cannot be null");
@@ -106,14 +110,15 @@ public class Order {
         this.sku = sku;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
-        this.subtotalPrice = subtotalPrice;
+        this.basePrice = basePrice;
         this.discountRate = discountRate;
         this.discountAmount = discountAmount;
-        this.preTaxTotal = preTaxTotal;
+        this.subtotalPrice = subtotalPrice;
         this.taxRate = taxRate;
         this.taxAmount = taxAmount;
         this.totalPrice = totalPrice;
         this.status = status;
+        this.appliedCouponCode = appliedCouponCode;
 
     }
 }

@@ -13,6 +13,7 @@ export default defineConfig({
       input: {
         'place-order': resolve(__dirname, 'src/pages/place-order.ts'),
         'order-history': resolve(__dirname, 'src/pages/order-history.ts'),
+        'admin-coupons': resolve(__dirname, 'src/pages/admin-coupons.ts'),
       },
       output: {
         entryFileNames: 'js/[name].js',
