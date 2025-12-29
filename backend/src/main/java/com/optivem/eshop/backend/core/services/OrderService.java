@@ -1,7 +1,7 @@
 package com.optivem.eshop.backend.core.services;
 
 import com.optivem.eshop.backend.core.dtos.BrowseOrderHistoryResponse;
-import com.optivem.eshop.backend.core.dtos.GetOrderResponse;
+import com.optivem.eshop.backend.core.dtos.ViewOrderDetailsResponse;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderRequest;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderResponse;
 import com.optivem.eshop.backend.core.entities.Order;
@@ -134,7 +134,7 @@ public class OrderService {
         return result;
     }
 
-    public GetOrderResponse getOrder(String orderNumber) {
+    public ViewOrderDetailsResponse getOrder(String orderNumber) {
         var optionalOrder = orderRepository.findByOrderNumber(orderNumber);
 
         if(optionalOrder.isEmpty()) {
@@ -143,7 +143,7 @@ public class OrderService {
 
         var order = optionalOrder.get();
 
-        var response = new GetOrderResponse();
+        var response = new ViewOrderDetailsResponse();
         response.setOrderNumber(orderNumber);
         response.setOrderTimestamp(order.getOrderTimestamp());
         response.setSku(order.getSku());

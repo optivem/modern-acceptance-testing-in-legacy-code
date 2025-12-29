@@ -1,7 +1,7 @@
 package com.optivem.eshop.backend.api.controller;
 
 import com.optivem.eshop.backend.core.dtos.BrowseOrderHistoryResponse;
-import com.optivem.eshop.backend.core.dtos.GetOrderResponse;
+import com.optivem.eshop.backend.core.dtos.ViewOrderDetailsResponse;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderRequest;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderResponse;
 import com.optivem.eshop.backend.core.services.OrderService;
@@ -35,7 +35,7 @@ public class OrderController {
     }
 
     @GetMapping("/api/orders/{orderNumber}")
-    public ResponseEntity<GetOrderResponse> getOrder(@PathVariable String orderNumber) {
+    public ResponseEntity<ViewOrderDetailsResponse> getOrder(@PathVariable String orderNumber) {
         var response = orderService.getOrder(orderNumber);
         return ResponseEntity.ok(response);
     }

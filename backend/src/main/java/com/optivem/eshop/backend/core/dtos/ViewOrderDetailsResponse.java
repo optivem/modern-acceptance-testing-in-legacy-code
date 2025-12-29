@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
-public class GetOrderResponse {
+public class ViewOrderDetailsResponse {
     private String orderNumber;
     private Instant orderTimestamp;
     private String sku;

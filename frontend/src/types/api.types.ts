@@ -18,7 +18,7 @@ export interface PlaceOrderResponse {
   orderNumber: string;
 }
 
-export interface GetOrderResponse {
+export interface ViewOrderDetailsResponse {
   orderNumber: string;
   orderTimestamp: string; // ISO 8601 date string
   sku: string;
@@ -63,6 +63,19 @@ export interface PublishCouponRequest {
 
 export interface CreateCouponResponse {
   code: string;
+}
+
+export interface BrowseCouponsItemResponse {
+  code: string;
+  discountRate: number;
+  validFrom?: string; // ISO 8601 date string
+  validTo?: string;   // ISO 8601 date string
+  usageLimit: number;
+  usedCount: number;
+}
+
+export interface BrowseCouponsResponse {
+  coupons: BrowseCouponsItemResponse[];
 }
 
 export interface GetCouponResponse {

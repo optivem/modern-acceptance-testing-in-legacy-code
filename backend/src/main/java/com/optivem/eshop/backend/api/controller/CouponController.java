@@ -1,7 +1,7 @@
 package com.optivem.eshop.backend.api.controller;
 
 import com.optivem.eshop.backend.core.dtos.PublishCouponRequest;
-import com.optivem.eshop.backend.core.dtos.GetCouponResponse;
+import com.optivem.eshop.backend.core.dtos.BrowseCouponsResponse;
 import com.optivem.eshop.backend.core.services.CouponService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,10 +32,10 @@ public class CouponController {
     }
 
     @GetMapping
-    public List<GetCouponResponse> getAllCoupons() {
-        return couponService.getAllCoupons().stream()
+    public BrowseCouponsResponse browseCoupons() {
+        var items = couponService.getAllCoupons().stream()
                 .map(coupon -> {
-                    var response = new GetCouponResponse();
+                    var response = new BrowseCouponsResponse.BrowseCouponsItemResponse();
                     response.setCode(coupon.getCode());
                     response.setDiscountRate(coupon.getDiscountRate());
                     response.setValidFrom(coupon.getValidFrom());
@@ -45,5 +45,9 @@ public class CouponController {
                     return response;
                 })
                 .toList();
+        
+        var result = new BrowseCouponsResponse();
+        result.setCoupons(items);
+        return result;
     }
 }

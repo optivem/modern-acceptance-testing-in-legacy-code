@@ -2,7 +2,7 @@
 
 import { handleResult, showSuccessNotification } from '../common';
 import { orderService } from '../services/order-service';
-import type { GetOrderResponse } from '../types/api.types';
+import type { ViewOrderDetailsResponse } from '../types/api.types';
 
 // Get order number from URL query parameter
 const urlParams = new URLSearchParams(window.location.search);
@@ -27,7 +27,7 @@ async function loadOrderDetails(orderNumber: string) {
   }
 }
 
-function displayOrderDetails(order: GetOrderResponse) {
+function displayOrderDetails(order: ViewOrderDetailsResponse) {
   const container = document.getElementById('orderDetailsContainer');
   if (!container) return;
 

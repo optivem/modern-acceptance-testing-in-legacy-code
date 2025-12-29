@@ -1,12 +1,12 @@
-import { createCoupon, getAllCoupons } from '../services/coupon-service';
+import { createCoupon, browseCoupons } from '../services/coupon-service';
 import { showSuccessNotification, handleResult, showNotification } from '../common';
-import type { GetCouponResponse } from '../types/api.types';
+import type { BrowseCouponsItemResponse } from '../types/api.types';
 
 // Load and display coupons
 async function loadCoupons() {
-  const result = await getAllCoupons();
-  handleResult(result, (coupons) => {
-    displayCoupons(coupons);
+  const result = await browseCoupons();
+  handleResult(result, (response) => {
+    displayCoupons(response.coupons);
   });
   
   if (!result.success) {
@@ -17,7 +17,7 @@ async function loadCoupons() {
   }
 }
 
-function displayCoupons(coupons: GetCouponResponse[]) {
+function displayCoupons(coupons: BrowseCouponsItemResponse[]) {
   const tbody = document.getElementById('couponTableBody');
   if (!tbody) return;
 
@@ -36,11 +36,11 @@ function displayCoupons(coupons: GetCouponResponse[]) {
       status = 'Not Yet Valid';
     } else if (validTo && now > validTo) {
       status = 'Expired';
-    } else if (coupon.usedCount >= coupon.usageLimit) {
+    } else if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit) {
       status = 'Limit Reached';
     }
 
-    const usageLimitDisplay = coupon.usageLimit === 2147483647 ? 'Unlimited' : coupon.usageLimit.toString();
+    const usageLimitDisplay = coupon.usageLimit === null ? 'Unlimited' : (coupon.usageLimit === 2147483647 ? 'Unlimited' : coupon.usageLimit.toString());
     const validFromDisplay = validFrom ? validFrom.toLocaleString() : 'Immediate';
     const validToDisplay = validTo ? validTo.toLocaleString() : 'Never';
     return `

@@ -1,4 +1,4 @@
-import { PublishCouponRequest, CreateCouponResponse, GetCouponResponse } from '../types/api.types';
+import { PublishCouponRequest, CreateCouponResponse, BrowseCouponsResponse } from '../types/api.types';
 import { fetchJson } from '../common';
 import type { Result } from '../types/result.types';
 
@@ -28,8 +28,8 @@ export async function createCoupon(
   });
 }
 
-export async function getAllCoupons(): Promise<Result<GetCouponResponse[]>> {
-  return await fetchJson<GetCouponResponse[]>(API_BASE_URL, {
+export async function browseCoupons(): Promise<Result<BrowseCouponsResponse>> {
+  return await fetchJson<BrowseCouponsResponse>(API_BASE_URL, {
     method: 'GET'
   });
 }
