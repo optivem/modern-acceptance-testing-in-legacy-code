@@ -14,7 +14,6 @@ import com.optivem.eshop.backend.core.services.external.TaxGateway;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.MonthDay;
@@ -23,9 +22,9 @@ import java.time.ZoneId;
 @Service
 public class OrderService {
 
-    public static final MonthDay DECEMBER_31 = MonthDay.of(12, 31);
-    private static final LocalTime CANCELLATION_BLOCK_START = LocalTime.of(22, 0);
-    private static final LocalTime CANCELLATION_BLOCK_END = LocalTime.of(23, 0);
+    public static final MonthDay CANCELLATION_RESTRICTED_MONTH_DAY = MonthDay.of(12, 31);
+    private static final LocalTime CANCELLATION_RESTRICTED_TIME_START = LocalTime.of(22, 0);
+    private static final LocalTime CANCELLATION_RESTRICTED_TIME_END = LocalTime.of(22, 30);
 
     private static final LocalTime ORDER_PLACEMENT_CUTOFF_TIME = LocalTime.of(17, 0);
 
@@ -146,13 +145,16 @@ public class OrderService {
         }
 
         var now = LocalDateTime.ofInstant(clockGateway.getCurrentTime(), ZoneId.systemDefault());
-        var currentDate = MonthDay.from(now);
-        var currentTime = now.toLocalTime();
+        var currentMonthDay = MonthDay.from(now);
 
-        if (currentDate.equals(DECEMBER_31) &&
-            currentTime.isAfter(CANCELLATION_BLOCK_START) && 
-            currentTime.isBefore(CANCELLATION_BLOCK_END)) {
-            throw new ValidationException("Order cancellation is not allowed on December 31st between 22:00 and 23:00");
+
+        if (currentMonthDay.equals(CANCELLATION_RESTRICTED_MONTH_DAY)) {
+            var currentTime = now.toLocalTime();
+
+            if(currentTime.isAfter(CANCELLATION_RESTRICTED_TIME_START) && 
+                currentTime.isBefore(CANCELLATION_RESTRICTED_TIME_END)) {
+                throw new ValidationException("Order cancellation is not allowed on December 31st between 22:00 and 23:00");
+            }
         }
 
         order.setStatus(OrderStatus.CANCELLED);
