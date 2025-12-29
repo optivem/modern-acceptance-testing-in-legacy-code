@@ -1,5 +1,6 @@
 package com.optivem.eshop.backend.api.controller;
 
+import com.optivem.eshop.backend.core.dtos.BrowseOrderHistoryResponse;
 import com.optivem.eshop.backend.core.dtos.GetOrderResponse;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderRequest;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderResponse;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class OrderController {
@@ -17,6 +19,12 @@ public class OrderController {
     
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
+    }
+
+    @GetMapping("/api/orders")
+    public ResponseEntity<BrowseOrderHistoryResponse> browseOrderHistory(@RequestParam(required = false) String orderNumber) {
+        var response = orderService.browseOrderHistory(orderNumber);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/api/orders")

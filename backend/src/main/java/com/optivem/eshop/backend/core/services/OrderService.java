@@ -1,5 +1,6 @@
 package com.optivem.eshop.backend.core.services;
 
+import com.optivem.eshop.backend.core.dtos.BrowseOrderHistoryResponse;
 import com.optivem.eshop.backend.core.dtos.GetOrderResponse;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderRequest;
 import com.optivem.eshop.backend.core.dtos.PlaceOrderResponse;
@@ -48,7 +49,6 @@ public class OrderService {
 
         System.out.println("Placing order for SKU: " + sku + ", quantity: " + quantity + ", country: " + country);
 
-        var orderNumber = generateOrderNumber();
         var orderTimestamp = clockGateway.getCurrentTime();
         var unitPrice = getUnitPrice(sku);
         var discountRate = getDiscountRate(couponCode);
@@ -61,6 +61,9 @@ public class OrderService {
         var totalPrice = subtotalPrice.add(taxAmount);
 
         var appliedCouponCode = discountRate.compareTo(BigDecimal.ZERO) > 0 ? couponCode : null;
+
+        // Generate orderNumber from timestamp + random suffix
+        var orderNumber = generateOrderNumber();
 
         var order = new Order(orderNumber, orderTimestamp, country,
                 sku, quantity, unitPrice, basePrice,
@@ -102,8 +105,37 @@ public class OrderService {
         return countryDetails.get().getTaxRate();
     }
 
+    public BrowseOrderHistoryResponse browseOrderHistory(String orderNumberFilter) {
+        // Delegate filtering and sorting to database for better performance
+        java.util.List<Order> orders;
+        if (orderNumberFilter == null || orderNumberFilter.trim().isEmpty()) {
+            orders = orderRepository.findAllByOrderByOrderTimestampDesc();
+        } else {
+            orders = orderRepository.findByOrderNumberContainingIgnoreCaseOrderByOrderTimestampDesc(orderNumberFilter.trim());
+        }
+        
+        var items = orders.stream()
+                .map(order -> {
+                    var response = new BrowseOrderHistoryResponse.BrowseOrderHistoryItemResponse();
+                    response.setOrderNumber(order.getOrderNumber());
+                    response.setOrderTimestamp(order.getOrderTimestamp());
+                    response.setSku(order.getSku());
+                    response.setCountry(order.getCountry());
+                    response.setQuantity(order.getQuantity());
+                    response.setTotalPrice(order.getTotalPrice());
+                    response.setStatus(order.getStatus());
+                    response.setAppliedCouponCode(order.getAppliedCouponCode());
+                    return response;
+                })
+                .collect(java.util.stream.Collectors.toList());
+                
+        var result = new BrowseOrderHistoryResponse();
+        result.setOrders(items);
+        return result;
+    }
+
     public GetOrderResponse getOrder(String orderNumber) {
-        var optionalOrder = orderRepository.findById(orderNumber);
+        var optionalOrder = orderRepository.findByOrderNumber(orderNumber);
 
         if(optionalOrder.isEmpty()) {
             throw new NotExistValidationException("Order " + orderNumber + " does not exist.");
@@ -113,6 +145,7 @@ public class OrderService {
 
         var response = new GetOrderResponse();
         response.setOrderNumber(orderNumber);
+        response.setOrderTimestamp(order.getOrderTimestamp());
         response.setSku(order.getSku());
         response.setQuantity(order.getQuantity());
         response.setUnitPrice(order.getUnitPrice());
@@ -135,7 +168,7 @@ public class OrderService {
             throw new ValidationException("Order number must not be empty");
         }
 
-        var optionalOrder = orderRepository.findById(orderNumber);
+        var optionalOrder = orderRepository.findByOrderNumber(orderNumber);
 
         if(optionalOrder.isEmpty()) {
             throw new NotExistValidationException("Order " + orderNumber + " does not exist.");
@@ -165,6 +198,13 @@ public class OrderService {
     }
 
     private String generateOrderNumber() {
-        return "ORD-" + java.util.UUID.randomUUID();
+        // Generate order number: ORD-YYYYMMDDHHMMSS-RND
+        // Readable, sortable, unique enough for practical use
+        var now = java.time.Instant.now();
+        var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+                .withZone(java.time.ZoneOffset.UTC);
+        var timestamp = formatter.format(now);
+        var random = java.util.UUID.randomUUID().toString().substring(0, 3).toUpperCase();
+        return "ORD-" + timestamp + "-" + random;
     }
 }

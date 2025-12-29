@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
-public class CreateCouponRequest {
+public class PublishCouponRequest {
     @NotBlank(message = "Coupon code must not be blank")
     private String code;
 

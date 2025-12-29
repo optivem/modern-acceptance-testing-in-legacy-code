@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order History - Optivem eShop</title>
     <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .filter-container {
+            margin-bottom: 20px;
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .order-table th,
+        .order-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .order-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .order-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .status-PLACED {
+            color: green;
+        }
+        .status-CANCELLED {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>Order History</h1>
@@ -12,78 +41,34 @@
         <a href="/">← Back to Home</a>
     </nav>
 
-    <form id="searchForm">
-        <div>
-            <label for="orderNumber">Order Number:</label>
-            <input type="text" id="orderNumber" name="orderNumber" aria-label="Order Number" required />
-        </div>
-        <button type="submit" aria-label="Search">Search</button>
-    </form>
+    <div class="filter-container">
+        <label for="orderNumberFilter">Filter by Order Number:</label>
+        <input type="text" id="orderNumberFilter" placeholder="Enter order number..." />
+        <button id="refreshButton">Refresh</button>
+    </div>
 
     <div id="notifications" aria-live="polite"></div>
 
-    <template id="orderDetailsTemplate">
-        <h2>Order Details</h2>
-        <div>
-            <label for="displayOrderNumber">Order Number:</label>
-            <input type="text" id="displayOrderNumber" aria-label="Display Order Number" readonly />
-        </div>
-        <div>
-            <label for="displaySku">SKU:</label>
-            <input type="text" id="displaySku" aria-label="Display SKU" readonly />
-        </div>
-        <div>
-            <label for="displayCountry">Country:</label>
-            <input type="text" id="displayCountry" aria-label="Display Country" readonly />
-        </div>
-        <div>
-            <label for="displayQuantity">Quantity:</label>
-            <input type="text" id="displayQuantity" aria-label="Display Quantity" readonly />
-        </div>
-        <div>
-            <label for="displayUnitPrice">Unit Price:</label>
-            <input type="text" id="displayUnitPrice" aria-label="Display Unit Price" readonly />
-        </div>
-        <div>
-            <label for="displayBasePrice">Base Price:</label>
-            <input type="text" id="displayBasePrice" aria-label="Display Base Price" readonly />
-        </div>
-        <div>
-            <label for="displayDiscountRate">Discount Rate:</label>
-            <input type="text" id="displayDiscountRate" aria-label="Display Discount Rate" readonly />
-        </div>
-        <div>
-            <label for="displayDiscountAmount">Discount Amount:</label>
-            <input type="text" id="displayDiscountAmount" aria-label="Display Discount Amount" readonly />
-        </div>
-        <div>
-            <label for="displaySubtotalPrice">Subtotal Price:</label>
-            <input type="text" id="displaySubtotalPrice" aria-label="Display Subtotal Price" readonly />
-        </div>
-        <div>
-            <label for="displayTaxRate">Tax Rate:</label>
-            <input type="text" id="displayTaxRate" aria-label="Display Tax Rate" readonly />
-        </div>
-        <div>
-            <label for="displayTaxAmount">Tax Amount:</label>
-            <input type="text" id="displayTaxAmount" aria-label="Display Tax Amount" readonly />
-        </div>
-        <div>
-            <label for="displayTotalPrice">Total Price:</label>
-            <input type="text" id="displayTotalPrice" aria-label="Display Total Price" readonly />
-        </div>
-        <div>
-            <label for="displayStatus">Status:</label>
-            <input type="text" id="displayStatus" aria-label="Display Status" readonly />
-        </div>
-        <div>
-            <label for="displayAppliedCouponCode">Applied Coupon Code:</label>
-            <input type="text" id="displayAppliedCouponCode" aria-label="Display Applied Coupon Code" readonly />
-        </div>
-        <button type="button" id="cancelButton" aria-label="Cancel Order">Cancel Order</button>
-    </template>
-
-    <div id="orderDetails"></div>
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>Timestamp</th>
+                <th>SKU</th>
+                <th>Country</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Coupon</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="orderTableBody">
+            <tr>
+                <td colspan="9" style="text-align: center;">Loading orders...</td>
+            </tr>
+        </tbody>
+    </table>
 
     <script type="module" src="/js/order-history.js"></script>
 </body>

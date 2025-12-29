@@ -1,7 +1,6 @@
-package com.optivem.eshop.backend.api;
+package com.optivem.eshop.backend.api.controller;
 
-import com.optivem.eshop.backend.core.dtos.CreateCouponRequest;
-import com.optivem.eshop.backend.core.dtos.CreateCouponResponse;
+import com.optivem.eshop.backend.core.dtos.PublishCouponRequest;
 import com.optivem.eshop.backend.core.dtos.GetCouponResponse;
 import com.optivem.eshop.backend.core.services.CouponService;
 import jakarta.validation.Valid;
@@ -22,7 +21,7 @@ public class CouponController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createCoupon(@Valid @RequestBody CreateCouponRequest request) {
+    public void createCoupon(@Valid @RequestBody PublishCouponRequest request) {
         couponService.createCoupon(
                 request.getCode(),
                 request.getDiscountRate(),

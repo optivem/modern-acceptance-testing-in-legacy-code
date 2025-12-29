@@ -14,6 +14,10 @@ import java.time.Instant;
 public class Coupon {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "code", nullable = false, unique = true)
     private String code;
 
@@ -26,7 +30,7 @@ public class Coupon {
     @Column(name = "valid_to", nullable = true)
     private Instant validTo;
 
-    @Column(name = "usage_limit", nullable = false)
+    @Column(name = "usage_limit", nullable = true)
     private Integer usageLimit;
 
     @Column(name = "used_count", nullable = false)
@@ -46,10 +50,8 @@ public class Coupon {
         if (validFrom != null && validTo != null && validTo.isBefore(validFrom)) {
             throw new IllegalArgumentException("validTo must be after validFrom");
         }
-        if (usageLimit == null) {
-            throw new IllegalArgumentException("usageLimit cannot be null");
-        }
-        if (usageLimit < 0) {
+        // usageLimit is optional - null means unlimited
+        if (usageLimit != null && usageLimit < 0) {
             throw new IllegalArgumentException("usageLimit must be non-negative");
         }
         if (usedCount == null) {

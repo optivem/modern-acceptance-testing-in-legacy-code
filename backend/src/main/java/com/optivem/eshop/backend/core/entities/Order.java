@@ -13,6 +13,10 @@ import java.time.Instant;
 @NoArgsConstructor
 public class Order {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "order_number", nullable = false, unique = true)
     private String orderNumber;
 
@@ -64,9 +68,7 @@ public class Order {
                  BigDecimal discountRate, BigDecimal discountAmount, BigDecimal subtotalPrice,
                  BigDecimal taxRate, BigDecimal taxAmount, BigDecimal totalPrice, OrderStatus status,
                  String appliedCouponCode) {
-        if (orderNumber == null) {
-            throw new IllegalArgumentException("orderNumber cannot be null");
-        }
+        // orderNumber can be null initially - will be set after ID generation
         if (orderTimestamp == null) {
             throw new IllegalArgumentException("orderTimestamp cannot be null");
         }

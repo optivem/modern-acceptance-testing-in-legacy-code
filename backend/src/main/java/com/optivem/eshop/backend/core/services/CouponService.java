@@ -27,7 +27,7 @@ public class CouponService {
             return BigDecimal.ZERO;
         }
 
-        var optionalCoupon = couponRepository.findById(couponCode);
+        var optionalCoupon = couponRepository.findByCode(couponCode);
 
         if (optionalCoupon.isEmpty()) {
             throw new ValidationException("couponCode", "Coupon code does not exist");
@@ -46,7 +46,8 @@ public class CouponService {
             throw new ValidationException("couponCode", "Coupon has expired");
         }
 
-        if (coupon.getUsedCount() >= coupon.getUsageLimit()) {
+        // Check usage limit only if it's set (not null)
+        if (coupon.getUsageLimit() != null && coupon.getUsedCount() >= coupon.getUsageLimit()) {
             throw new ValidationException("couponCode", "Coupon usage limit has been reached");
         }
 
@@ -54,7 +55,7 @@ public class CouponService {
     }
 
     public void incrementUsageCount(String couponCode) {
-        var optionalCoupon = couponRepository.findById(couponCode);
+        var optionalCoupon = couponRepository.findByCode(couponCode);
         if (optionalCoupon.isPresent()) {
             var coupon = optionalCoupon.get();
             coupon.setUsedCount(coupon.getUsedCount() + 1);
@@ -63,7 +64,7 @@ public class CouponService {
     }
 
     public Coupon createCoupon(String code, BigDecimal discountRate, Instant validFrom, Instant validTo, Integer usageLimit) {
-        if (couponRepository.existsById(code)) {
+        if (couponRepository.findByCode(code).isPresent()) {
             throw new ValidationException("code", "Coupon code already exists");
         }
 

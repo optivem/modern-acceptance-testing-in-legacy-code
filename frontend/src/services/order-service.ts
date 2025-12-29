@@ -1,7 +1,7 @@
 // Service layer for Order API operations
 
 import { fetchJson } from '../common';
-import type { PlaceOrderRequest, PlaceOrderResponse, GetOrderResponse } from '../types/api.types';
+import type { PlaceOrderRequest, PlaceOrderResponse, GetOrderResponse, BrowseOrderHistoryResponse } from '../types/api.types';
 import type { Result } from '../types/result.types';
 
 class OrderService {
@@ -29,6 +29,15 @@ class OrderService {
 
   async getOrder(orderNumber: string): Promise<Result<GetOrderResponse>> {
     return fetchJson<GetOrderResponse>(`${this.baseUrl}/${orderNumber}`, {
+      method: 'GET'
+    });
+  }
+
+  async browseOrderHistory(orderNumberFilter?: string): Promise<Result<BrowseOrderHistoryResponse>> {
+    const url = orderNumberFilter && orderNumberFilter.trim() 
+      ? `${this.baseUrl}?orderNumber=${encodeURIComponent(orderNumberFilter.trim())}`
+      : this.baseUrl;
+    return fetchJson<BrowseOrderHistoryResponse>(url, {
       method: 'GET'
     });
   }

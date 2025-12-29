@@ -1,4 +1,4 @@
-import { CreateCouponRequest, CreateCouponResponse, GetCouponResponse } from '../types/api.types';
+import { PublishCouponRequest, CreateCouponResponse, GetCouponResponse } from '../types/api.types';
 import { fetchJson } from '../common';
 import type { Result } from '../types/result.types';
 
@@ -11,7 +11,7 @@ export async function createCoupon(
   validTo: string | null,
   usageLimit: number | null
 ): Promise<Result<CreateCouponResponse>> {
-  const request: CreateCouponRequest = {
+  const request: PublishCouponRequest = {
     code,
     discountRate,
     validFrom: validFrom ?? undefined,

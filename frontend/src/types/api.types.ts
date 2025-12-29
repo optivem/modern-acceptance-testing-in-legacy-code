@@ -20,6 +20,7 @@ export interface PlaceOrderResponse {
 
 export interface GetOrderResponse {
   orderNumber: string;
+  orderTimestamp: string; // ISO 8601 date string
   sku: string;
   country: string;
   quantity: number;
@@ -35,8 +36,24 @@ export interface GetOrderResponse {
   appliedCouponCode?: string;
 }
 
+// Browse Order History types
+export interface BrowseOrderHistoryItemResponse {
+  orderNumber: string;
+  orderTimestamp: string; // ISO 8601 date string
+  sku: string;
+  country: string;
+  quantity: number;
+  totalPrice: number;
+  status: OrderStatus;
+  appliedCouponCode?: string;
+}
+
+export interface BrowseOrderHistoryResponse {
+  orders: BrowseOrderHistoryItemResponse[];
+}
+
 // Coupon API types
-export interface CreateCouponRequest {
+export interface PublishCouponRequest {
   code: string;
   discountRate: number;
   validFrom?: string; // ISO 8601 date string - optional (valid from now if not provided)
