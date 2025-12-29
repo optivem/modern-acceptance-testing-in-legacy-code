@@ -54,15 +54,15 @@ public class OrderService {
         var discountRate = getDiscountRate();
         var taxRate = getTaxRate(country);
 
-        var originalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
-        var discountAmount = originalPrice.multiply(discountRate);
-        var subtotalPrice = originalPrice.subtract(discountAmount);
-        var taxAmount = subtotalPrice.multiply(taxRate);
-        var totalPrice = subtotalPrice.add(taxAmount);
+        var subtotalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
+        var discountAmount = subtotalPrice.multiply(discountRate);
+        var preTaxTotal = subtotalPrice.subtract(discountAmount);
+        var taxAmount = preTaxTotal.multiply(taxRate);
+        var totalPrice = preTaxTotal.add(taxAmount);
 
         var order = new Order(orderNumber, orderTimestamp, country,
-                sku, quantity, unitPrice, originalPrice,
-                discountRate, discountAmount, subtotalPrice,
+                sku, quantity, unitPrice, subtotalPrice,
+                discountRate, discountAmount, preTaxTotal,
                 taxRate, taxAmount, totalPrice, OrderStatus.PLACED);
 
         orderRepository.save(order);
@@ -115,10 +115,10 @@ public class OrderService {
         response.setSku(order.getSku());
         response.setQuantity(order.getQuantity());
         response.setUnitPrice(order.getUnitPrice());
-        response.setOriginalPrice(order.getOriginalPrice());
+        response.setSubtotalPrice(order.getSubtotalPrice());
         response.setDiscountRate(order.getDiscountRate());
         response.setDiscountAmount(order.getDiscountAmount());
-        response.setSubtotalPrice(order.getSubtotalPrice());
+        response.setPreTaxTotal(order.getPreTaxTotal());
         response.setTaxRate(order.getTaxRate());
         response.setTaxAmount(order.getTaxAmount());
         response.setTotalPrice(order.getTotalPrice());

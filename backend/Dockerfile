@@ -14,7 +14,7 @@ RUN gradle dependencies --no-daemon || true
 COPY src ./src
 
 # Build the application
-RUN gradle build --no-daemon -x test
+RUN gradle build --no-daemon
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine

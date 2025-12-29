@@ -23,10 +23,10 @@ export interface GetOrderResponse {
   country: string;
   quantity: number;
   unitPrice: number;
-  originalPrice: number;
+  subtotalPrice: number;
   discountRate: number;
   discountAmount: number;
-  subtotalPrice: number;
+  preTaxTotal: number;
   taxRate: number;
   taxAmount: number;
   totalPrice: number;

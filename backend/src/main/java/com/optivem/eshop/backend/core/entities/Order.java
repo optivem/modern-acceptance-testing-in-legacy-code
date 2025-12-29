@@ -31,8 +31,8 @@ public class Order {
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(name = "original_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal originalPrice;
+    @Column(name = "subtotal_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotalPrice;
 
     @Column(name = "discount_rate", nullable = false, precision = 5, scale = 4)
     private BigDecimal discountRate;
@@ -40,8 +40,8 @@ public class Order {
     @Column(name = "discount_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal discountAmount;
 
-    @Column(name = "subtotal_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal subtotalPrice;
+    @Column(name = "pre_tax_total", nullable = false, precision = 10, scale = 2)
+    private BigDecimal preTaxTotal;
 
     @Column(name = "tax_rate", nullable = false, precision = 5, scale = 4)
     private BigDecimal taxRate;
@@ -57,8 +57,8 @@ public class Order {
     private OrderStatus status;
 
     public Order(String orderNumber, Instant orderTimestamp, String country,
-                 String sku, int quantity, BigDecimal unitPrice, BigDecimal originalPrice,
-                 BigDecimal discountRate, BigDecimal discountAmount, BigDecimal subtotalPrice,
+                 String sku, int quantity, BigDecimal unitPrice, BigDecimal subtotalPrice,
+                 BigDecimal discountRate, BigDecimal discountAmount, BigDecimal preTaxTotal,
                  BigDecimal taxRate, BigDecimal taxAmount, BigDecimal totalPrice, OrderStatus status) {
         if (orderNumber == null) {
             throw new IllegalArgumentException("orderNumber cannot be null");
@@ -75,8 +75,8 @@ public class Order {
         if (unitPrice == null) {
             throw new IllegalArgumentException("unitPrice cannot be null");
         }
-        if (originalPrice == null) {
-            throw new IllegalArgumentException("originalPrice cannot be null");
+        if (subtotalPrice == null) {
+            throw new IllegalArgumentException("subtotalPrice cannot be null");
         }
         if (discountRate == null) {
             throw new IllegalArgumentException("discountRate cannot be null");
@@ -84,8 +84,8 @@ public class Order {
         if (discountAmount == null) {
             throw new IllegalArgumentException("discountAmount cannot be null");
         }
-        if (subtotalPrice == null) {
-            throw new IllegalArgumentException("subtotalPrice cannot be null");
+        if (preTaxTotal == null) {
+            throw new IllegalArgumentException("preTaxTotal cannot be null");
         }
         if (taxRate == null) {
             throw new IllegalArgumentException("taxRate cannot be null");
@@ -106,10 +106,10 @@ public class Order {
         this.sku = sku;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
-        this.originalPrice = originalPrice;
+        this.subtotalPrice = subtotalPrice;
         this.discountRate = discountRate;
         this.discountAmount = discountAmount;
-        this.subtotalPrice = subtotalPrice;
+        this.preTaxTotal = preTaxTotal;
         this.taxRate = taxRate;
         this.taxAmount = taxAmount;
         this.totalPrice = totalPrice;

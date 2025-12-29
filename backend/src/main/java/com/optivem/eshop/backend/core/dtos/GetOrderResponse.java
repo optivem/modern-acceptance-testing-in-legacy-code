@@ -11,10 +11,10 @@ public class GetOrderResponse {
     private String sku;
     private int quantity;
     private BigDecimal unitPrice;
-    private BigDecimal originalPrice;
+    private BigDecimal subtotalPrice;
     private BigDecimal discountRate;
     private BigDecimal discountAmount;
-    private BigDecimal subtotalPrice;
+    private BigDecimal preTaxTotal;
     private BigDecimal taxRate;
     private BigDecimal taxAmount;
     private BigDecimal totalPrice;
