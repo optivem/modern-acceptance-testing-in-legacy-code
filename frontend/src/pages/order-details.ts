@@ -9,7 +9,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const orderNumber = urlParams.get('orderNumber');
 
 if (!orderNumber) {
-  document.getElementById('orderDetailsContainer')!.innerHTML = 
+  const container = document.getElementById('orderDetailsContainer')!;
+  container.setAttribute('aria-busy', 'false');
+  container.innerHTML = 
     '<p style="color: red;">Error: No order number provided</p>';
 } else {
   loadOrderDetails(orderNumber);
@@ -22,7 +24,9 @@ async function loadOrderDetails(orderNumber: string) {
   });
   
   if (!result.success) {
-    document.getElementById('orderDetailsContainer')!.innerHTML = 
+    const container = document.getElementById('orderDetailsContainer')!;
+    container.setAttribute('aria-busy', 'false');
+    container.innerHTML = 
       '<p style="color: red;">Failed to load order details</p>';
   }
 }
@@ -31,57 +35,59 @@ function displayOrderDetails(order: ViewOrderDetailsResponse) {
   const container = document.getElementById('orderDetailsContainer');
   if (!container) return;
 
+  container.setAttribute('aria-busy', 'false');
+
   const html = `
     <div class="details-grid">
       <label>Order Number:</label>
-      <div class="value">${order.orderNumber}</div>
+      <div class="value" aria-label="Display Order Number">${order.orderNumber}</div>
       
       <label>Order Timestamp:</label>
-      <div class="value">${new Date(order.orderTimestamp).toLocaleString()}</div>
+      <div class="value" aria-label="Display Order Timestamp">${new Date(order.orderTimestamp).toLocaleString()}</div>
       
       <label>Status:</label>
-      <div class="value status-${order.status}">${order.status}</div>
+      <div class="value status-${order.status}" aria-label="Display Status">${order.status}</div>
       
       <label>SKU:</label>
-      <div class="value">${order.sku}</div>
+      <div class="value" aria-label="Display SKU">${order.sku}</div>
       
       <label>Country:</label>
-      <div class="value">${order.country}</div>
+      <div class="value" aria-label="Display Country">${order.country}</div>
       
       <label>Quantity:</label>
-      <div class="value">${order.quantity}</div>
+      <div class="value" aria-label="Display Quantity">${order.quantity}</div>
       
       <label>Unit Price:</label>
-      <div class="value">$${order.unitPrice.toFixed(2)}</div>
+      <div class="value" aria-label="Display Unit Price">$${order.unitPrice.toFixed(2)}</div>
       
       <label>Base Price:</label>
-      <div class="value">$${order.basePrice.toFixed(2)}</div>
+      <div class="value" aria-label="Display Base Price">$${order.basePrice.toFixed(2)}</div>
       
       <label>Discount Rate:</label>
-      <div class="value">${(order.discountRate * 100).toFixed(2)}%</div>
+      <div class="value" aria-label="Display Discount Rate">${(order.discountRate * 100).toFixed(2)}%</div>
       
       <label>Discount Amount:</label>
-      <div class="value">$${order.discountAmount.toFixed(2)}</div>
+      <div class="value" aria-label="Display Discount Amount">$${order.discountAmount.toFixed(2)}</div>
       
       <label>Subtotal Price:</label>
-      <div class="value">$${order.subtotalPrice.toFixed(2)}</div>
+      <div class="value" aria-label="Display Subtotal Price">$${order.subtotalPrice.toFixed(2)}</div>
       
       <label>Tax Rate:</label>
-      <div class="value">${(order.taxRate * 100).toFixed(2)}%</div>
+      <div class="value" aria-label="Display Tax Rate">${(order.taxRate * 100).toFixed(2)}%</div>
       
       <label>Tax Amount:</label>
-      <div class="value">$${order.taxAmount.toFixed(2)}</div>
+      <div class="value" aria-label="Display Tax Amount">$${order.taxAmount.toFixed(2)}</div>
       
       <label>Total Price:</label>
-      <div class="value"><strong>$${order.totalPrice.toFixed(2)}</strong></div>
+      <div class="value" aria-label="Display Total Price"><strong>$${order.totalPrice.toFixed(2)}</strong></div>
       
       <label>Applied Coupon:</label>
-      <div class="value">${order.appliedCouponCode || 'None'}</div>
+      <div class="value" aria-label="Display Applied Coupon">${order.appliedCouponCode || 'None'}</div>
     </div>
     
     <div class="actions">
-      ${order.status === 'PLACED' ? '<button id="cancelButton">Cancel Order</button>' : ''}
-      <button id="backButton">Back to Order History</button>
+      ${order.status === 'PLACED' ? '<button id="cancelButton" aria-label="Cancel Order">Cancel Order</button>' : ''}
+      <button id="backButton" aria-label="Back to Order History">Back to Order History</button>
     </div>
   `;
   

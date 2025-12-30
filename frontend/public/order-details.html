@@ -32,12 +32,12 @@
 <body>
     <h1>Order Details</h1>
     <nav>
-        <a href="/order-history.html">← Back to Order History</a>
+        <a href="/order-history.html" aria-label="Back to Order History">← Back to Order History</a>
     </nav>
 
     <div id="notifications" aria-live="polite"></div>
 
-    <div id="orderDetailsContainer">
+    <div id="orderDetailsContainer" role="region" aria-label="Order Details" aria-busy="true" aria-live="polite">
         <p>Loading order details...</p>
     </div>
 
