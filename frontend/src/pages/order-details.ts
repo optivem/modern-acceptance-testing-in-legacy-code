@@ -16,6 +16,13 @@ if (!orderNumber) {
     '<p role="alert" style="color: red;">Error: No order number provided</p>';
 } else {
   loadOrderDetails(orderNumber);
+  
+  // Reload order details when page becomes visible (handles browser back button, tab switching)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      loadOrderDetails(orderNumber);
+    }
+  });
 }
 
 async function loadOrderDetails(orderNumber: string) {
