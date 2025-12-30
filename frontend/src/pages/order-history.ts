@@ -57,6 +57,13 @@ function displayOrders(orders: BrowseOrderHistoryItemResponse[]) {
 document.getElementById('orderNumberFilter')?.addEventListener('input', loadOrders);
 document.getElementById('refreshButton')?.addEventListener('click', loadOrders);
 
+// Reload orders when page becomes visible (handles browser back button)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    loadOrders();
+  }
+});
+
 // Load orders on page load
 loadOrders();
 
