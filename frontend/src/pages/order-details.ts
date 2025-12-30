@@ -11,8 +11,9 @@ const orderNumber = urlParams.get('orderNumber');
 if (!orderNumber) {
   const container = document.getElementById('orderDetailsContainer')!;
   container.setAttribute('aria-busy', 'false');
+  container.setAttribute('data-load-state', 'empty');
   container.innerHTML = 
-    '<p style="color: red;">Error: No order number provided</p>';
+    '<p role="alert" style="color: red;">Error: No order number provided</p>';
 } else {
   loadOrderDetails(orderNumber);
 }
@@ -26,8 +27,9 @@ async function loadOrderDetails(orderNumber: string) {
   if (!result.success) {
     const container = document.getElementById('orderDetailsContainer')!;
     container.setAttribute('aria-busy', 'false');
+    container.setAttribute('data-load-state', 'error');
     container.innerHTML = 
-      '<p style="color: red;">Failed to load order details</p>';
+      '<p role="alert" style="color: red;">Failed to load order details</p>';
   }
 }
 
@@ -36,6 +38,7 @@ function displayOrderDetails(order: ViewOrderDetailsResponse) {
   if (!container) return;
 
   container.setAttribute('aria-busy', 'false');
+  container.setAttribute('data-load-state', 'success');
 
   const html = `
     <div class="details-grid">

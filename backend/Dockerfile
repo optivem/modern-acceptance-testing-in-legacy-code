@@ -1,5 +1,5 @@
 # Build stage
-FROM gradle:8-jdk21-alpine AS build
+FROM gradle:8-jdk21 AS build
 
 WORKDIR /app
 
