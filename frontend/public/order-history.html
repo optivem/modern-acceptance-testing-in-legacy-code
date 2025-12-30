@@ -38,13 +38,13 @@
 <body>
     <h1>Order History</h1>
     <nav>
-        <a href="/">← Back to Home</a>
+        <a href="/" aria-label="Back to Home">← Back to Home</a>
     </nav>
 
     <div class="filter-container">
         <label for="orderNumberFilter">Filter by Order Number:</label>
-        <input type="text" id="orderNumberFilter" placeholder="Enter order number..." />
-        <button id="refreshButton">Refresh</button>
+        <input type="text" id="orderNumberFilter" aria-label="Order Number" placeholder="Enter order number..." />
+        <button id="refreshButton" aria-label="Search">Refresh</button>
     </div>
 
     <div id="notifications" aria-live="polite"></div>
@@ -63,7 +63,7 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody id="orderTableBody">
+        <tbody id="orderTableBody" aria-busy="true" aria-live="polite">
             <tr>
                 <td colspan="9" style="text-align: center;">Loading orders...</td>
             </tr>
