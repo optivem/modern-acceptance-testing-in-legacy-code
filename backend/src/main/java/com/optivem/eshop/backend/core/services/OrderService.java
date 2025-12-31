@@ -187,8 +187,8 @@ public class OrderService {
         if (currentMonthDay.equals(CANCELLATION_RESTRICTED_MONTH_DAY)) {
             var currentTime = now.toLocalTime();
 
-            if(currentTime.isAfter(CANCELLATION_RESTRICTED_TIME_START) && 
-                currentTime.isBefore(CANCELLATION_RESTRICTED_TIME_END)) {
+            if(!currentTime.isBefore(CANCELLATION_RESTRICTED_TIME_START) && 
+                !currentTime.isAfter(CANCELLATION_RESTRICTED_TIME_END)) {
                 throw new ValidationException("Order cancellation is not allowed on December 31st between 22:00 and 23:00");
             }
         }
