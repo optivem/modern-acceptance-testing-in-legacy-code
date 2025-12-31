@@ -180,7 +180,7 @@ public class OrderService {
             throw new ValidationException("Order has already been cancelled");
         }
 
-        var now = LocalDateTime.ofInstant(clockGateway.getCurrentTime(), ZoneId.systemDefault());
+        var now = LocalDateTime.ofInstant(clockGateway.getCurrentTime(), ZoneId.of("UTC"));
         var currentMonthDay = MonthDay.from(now);
 
 
