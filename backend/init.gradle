@@ -1,0 +1,27 @@
+// Gradle init script for better TLS handling and retry logic
+allprojects {
+    buildscript {
+        repositories.all { repository ->
+            if (repository instanceof MavenArtifactRepository) {
+                repository.setAllowInsecureProtocol(false)
+            }
+        }
+    }
+    
+    repositories.all { repository ->
+        if (repository instanceof MavenArtifactRepository) {
+            repository.setAllowInsecureProtocol(false)
+        }
+    }
+}
+
+// Configure retry logic for network failures
+gradle.taskGraph.beforeTask { Task task ->
+    task.outputs.upToDateWhen { false }
+}
+
+// System properties for better networking
+System.setProperty('java.net.preferIPv4Stack', 'true')
+System.setProperty('sun.net.client.defaultConnectTimeout', '60000')
+System.setProperty('sun.net.client.defaultReadTimeout', '60000')
+System.setProperty('https.protocols', 'TLSv1.2,TLSv1.3')

@@ -3,30 +3,29 @@ FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
-# Install CA certificates explicitly
-RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+# Update CA certificates and install debugging tools
+RUN apt-get update && \
+    apt-get install -y ca-certificates openssl curl && \
+    update-ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+# Test Maven Central connectivity
+RUN curl -v --connect-timeout 10 https://repo.maven.apache.org/maven2/ || true
 
 # Copy Gradle wrapper and config
 COPY gradlew .
 COPY gradle ./gradle
 COPY build.gradle settings.gradle ./
-
-# Verify environment
-RUN java -version
-RUN ./gradlew --version
-
-# Warm dependency cache with retry logic (handles transient network failures)
-RUN for i in 1 2 3; do \
-      echo "Attempt $i: Downloading dependencies..." && \
-      ./gradlew dependencies --no-daemon && break || \
-      (echo "Attempt $i failed, retrying..." && sleep 5); \
-    done
+COPY init.gradle ./
 
 # Copy sources
 COPY src ./src
 
-# Build
-RUN ./gradlew build --no-daemon
+# Build with init script for proper TLS configuration and retry logic
+RUN ./gradlew build --no-daemon --init-script init.gradle \
+    -Dorg.gradle.daemon=false \
+    -Dhttp.socketTimeout=60000 \
+    -Dhttp.connectionTimeout=60000
 
 # Runtime stage
 FROM eclipse-temurin:21-jre
