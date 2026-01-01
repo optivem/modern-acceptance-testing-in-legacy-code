@@ -315,9 +315,11 @@ function Test-System-Selected {
     } catch {
         Write-Host ""
         Write-Host "Some $TestName failed." -ForegroundColor Red
-        Write-Host "Test report: $TestReportPath"
+        
         throw
     }
+
+    Write-Host "Test report: $TestReportPath"
 }
 
 function Test-System {
