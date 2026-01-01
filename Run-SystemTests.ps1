@@ -312,14 +312,21 @@ function Test-System-Selected {
 
         Write-Host ""
         Write-Host "All $TestName passed!" -ForegroundColor Green
+        Write-Host "Test report: $TestReportPath" -ForegroundColor Cyan
     } catch {
         Write-Host ""
         Write-Host "Some $TestName failed." -ForegroundColor Red
+        Write-Host "Test report: $TestReportPath" -ForegroundColor Yellow
+        
+        if (Test-Path $TestReportPath) {
+            Write-Host "Opening test report..." -ForegroundColor Yellow
+            Start-Process $TestReportPath
+        } else {
+            Write-Host "Test report does not exist: $TestReportPath" -ForegroundColor Red
+        }
         
         throw
     }
-
-    Write-Host "Test report: $TestReportPath"
 }
 
 function Test-System {
@@ -435,7 +442,13 @@ try {
 
     if (-not $SkipTests) {
         Write-Heading -Text "Test System"
+        $testStartTime = Get-Date
         Test-System
+        $testEndTime = Get-Date
+        $testDuration = $testEndTime - $testStartTime
+        
+        Write-Host ""
+        Write-Host "Test execution completed in: $($testDuration.ToString('mm\:ss\.fff'))" -ForegroundColor Cyan
     }
 
     Write-Heading -Text "DONE" -Color Green
