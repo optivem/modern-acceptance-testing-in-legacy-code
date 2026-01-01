@@ -1,23 +1,31 @@
 # Build stage
-FROM gradle:8-jdk21 AS build
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
-# Copy Gradle files first for better caching
-COPY build.gradle settings.gradle ./
+# Install CA certificates explicitly
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+
+# Copy Gradle wrapper and config
+COPY gradlew .
 COPY gradle ./gradle
+COPY build.gradle settings.gradle ./
 
-# Download dependencies (cached if build files don't change)
-RUN gradle dependencies --no-daemon || true
+# Verify environment
+RUN java -version
+RUN ./gradlew --version
 
-# Copy source code
+# Warm dependency cache
+RUN ./gradlew dependencies --no-daemon || true
+
+# Copy sources
 COPY src ./src
 
-# Build the application
-RUN gradle build --no-daemon
+# Build
+RUN ./gradlew build --no-daemon
 
 # Runtime stage
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 

@@ -44,13 +44,13 @@ function displayCoupons(coupons: BrowseCouponsItemResponse[]) {
     const validFromDisplay = validFrom ? validFrom.toLocaleString() : 'Immediate';
     const validToDisplay = validTo ? validTo.toLocaleString() : 'Never';
     return `
-      <tr>
-        <td>${escapeHtml(coupon.code)}</td>
-        <td>${(coupon.discountRate * 100).toFixed(2)}%</td>
-        <td>${validFromDisplay}</td>
-        <td>${validToDisplay}</td>
-        <td>${usageLimitDisplay}</td>
-        <td>${coupon.usedCount}</td>
+      <tr aria-label="Coupon Row">
+        <td aria-label="Coupon Code Cell">${escapeHtml(coupon.code)}</td>
+        <td aria-label="Discount Rate Cell">${(coupon.discountRate * 100).toFixed(2)}%</td>
+        <td aria-label="Valid From Cell">${validFromDisplay}</td>
+        <td aria-label="Valid To Cell">${validToDisplay}</td>
+        <td aria-label="Usage Limit Cell">${usageLimitDisplay}</td>
+        <td aria-label="Used Count Cell">${coupon.usedCount}</td>
         <td>${status}</td>
       </tr>
     `;
