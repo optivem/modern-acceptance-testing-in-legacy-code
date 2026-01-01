@@ -246,7 +246,9 @@ function Start-System {
 
     if ($ForceBuild) {
         Write-Host "Force rebuilding images with no cache..." -ForegroundColor Yellow
-        Execute-Command -Command "docker compose -f $ComposeFile build --no-cache"
+        # Execute-Command -Command "docker compose -f $ComposeFile build --no-cache"
+        Execute-Command -Command "docker compose -f $ComposeFile build"
+        # NOTE: --no-cache is commented out to speed up builds during development, since build is enough to take into account source code changes
     }
 
     Execute-Command -Command "docker compose -f $ComposeFile up -d"

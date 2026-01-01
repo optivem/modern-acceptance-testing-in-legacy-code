@@ -1,6 +1,7 @@
 import { createCoupon, browseCoupons } from '../services/coupon-service';
-import { showSuccessNotification, handleResult, showNotification } from '../common';
+import { showSuccessNotification, handleResult, showApiError } from '../common';
 import type { BrowseCouponsItemResponse } from '../types/api.types';
+import type { ApiError } from '../types/error.types';
 
 // Load and display coupons
 async function loadCoupons() {
@@ -76,24 +77,49 @@ document.getElementById('createCouponForm')?.addEventListener('submit', async (e
   const validToStr = formData.get('validTo') as string;
   const usageLimitStr = formData.get('usageLimit') as string;
 
-  // Validate required fields
+  // Client-side validation - collect field errors
+  const fieldErrors: string[] = [];
+
+  // Validate coupon code
   if (!code || !code.trim()) {
-    showNotification('Coupon code is required', true);
-    return;
+    fieldErrors.push('code: Coupon code must not be blank');
   }
 
+  // Validate discount rate
   if (!discountRateStr) {
-    showNotification('Discount rate is required', true);
+    fieldErrors.push('discountRate: Discount rate must not be null');
+  } else {
+    const discountRate = parseFloat(discountRateStr);
+    
+    // Validate discount rate range
+    if (isNaN(discountRate)) {
+      fieldErrors.push('discountRate: Discount rate must not be null');
+    } else if (discountRate <= 0) {
+      fieldErrors.push('discountRate: Discount rate must be greater than 0.00');
+    } else if (discountRate > 1) {
+      fieldErrors.push('discountRate: Discount rate must be at most 1.00');
+    }
+  }
+
+  const usageLimit = usageLimitStr && usageLimitStr.trim().length > 0 ? parseInt(usageLimitStr) : null;
+  
+  // Validate usage limit
+  if (usageLimit !== null && usageLimit <= 0) {
+    fieldErrors.push('usageLimit: Usage limit must be positive');
+  }
+
+  // Show validation errors if any
+  if (fieldErrors.length > 0) {
+    const validationError: ApiError = {
+      message: 'The request contains one or more validation errors',
+      fieldErrors,
+      status: 400
+    };
+    showApiError(validationError);
     return;
   }
 
   const discountRate = parseFloat(discountRateStr);
-  if (isNaN(discountRate) || discountRate < 0 || discountRate > 1) {
-    showNotification('Discount rate must be between 0 and 1', true);
-    return;
-  }
-
-  const usageLimit = usageLimitStr && usageLimitStr.trim().length > 0 ? parseInt(usageLimitStr) : null;
 
   // Convert datetime-local to ISO 8601 string, or null if not provided (empty string check)
   const validFrom = (validFromStr && validFromStr.trim().length > 0) ? new Date(validFromStr).toISOString() : null;

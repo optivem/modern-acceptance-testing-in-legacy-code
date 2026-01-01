@@ -16,8 +16,8 @@ public class PublishCouponRequest {
     private String code;
 
     @NotNull(message = "Discount rate must not be null")
-    @DecimalMin(value = "0.0", message = "Discount rate must be at least 0")
-    @DecimalMax(value = "1.0", message = "Discount rate must be at most 1")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Discount rate must be greater than 0.00")
+    @DecimalMax(value = "1.0", message = "Discount rate must be at most 1.00")
     private BigDecimal discountRate;
 
     private Instant validFrom;

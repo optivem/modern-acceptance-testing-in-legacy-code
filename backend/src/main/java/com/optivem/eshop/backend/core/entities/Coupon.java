@@ -43,8 +43,8 @@ public class Coupon {
         if (discountRate == null) {
             throw new IllegalArgumentException("discountRate cannot be null");
         }
-        if (discountRate.compareTo(BigDecimal.ZERO) < 0 || discountRate.compareTo(BigDecimal.ONE) > 0) {
-            throw new IllegalArgumentException("discountRate must be between 0 and 1");
+        if (discountRate.compareTo(BigDecimal.ZERO) <= 0 || discountRate.compareTo(BigDecimal.ONE) > 0) {
+            throw new IllegalArgumentException("discountRate must be greater than 0 and at most 1");
         }
         // Only validate date order if both dates are provided
         if (validFrom != null && validTo != null && validTo.isBefore(validFrom)) {

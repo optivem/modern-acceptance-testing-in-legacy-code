@@ -41,12 +41,12 @@
         <div class="form-row">
             <div>
                 <label for="code">Coupon Code:</label>
-                <input type="text" id="code" name="code" aria-label="Coupon Code" required />
+                <input type="text" id="code" name="code" aria-label="Coupon Code" />
             </div>
             <div>
                 <label for="discountRate">Discount Rate (0-1):</label>
                 <input type="number" id="discountRate" name="discountRate" aria-label="Discount Rate" 
-                       step="0.01" min="0" max="1" value="0.2" required />
+                       step="0.01" value="0.2" />
             </div>
         </div>
         <div class="form-row">
@@ -63,7 +63,7 @@
             <div>
                 <label for="usageLimit">Usage Limit (Optional):</label>
                 <input type="number" id="usageLimit" name="usageLimit" aria-label="Usage Limit" 
-                       min="1" placeholder="No limit" />
+                       placeholder="No limit" />
             </div>
             <div style="display: flex; align-items: flex-end;">
                 <button type="submit" aria-label="Create Coupon">Create Coupon</button>

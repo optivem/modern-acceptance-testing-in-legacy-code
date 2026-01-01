@@ -17,7 +17,7 @@ public class CouponService {
     private static final String MSG_COUPON_DOES_NOT_EXIST = "Coupon code %s does not exist";
     private static final String MSG_COUPON_NOT_YET_VALID = "Coupon code %s is not yet valid";
     private static final String MSG_COUPON_EXPIRED = "Coupon code %s has expired";
-    private static final String MSG_COUPON_USAGE_LIMIT_REACHED = "Coupon code %s usage limit has been reached";
+    private static final String MSG_COUPON_USAGE_LIMIT_REACHED = "Coupon code %s has exceeded its usage limit";
     private static final String MSG_COUPON_CODE_ALREADY_EXISTS = "Coupon code %s already exists";
 
     private final CouponRepository couponRepository;

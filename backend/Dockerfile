@@ -15,8 +15,12 @@ COPY build.gradle settings.gradle ./
 RUN java -version
 RUN ./gradlew --version
 
-# Warm dependency cache
-RUN ./gradlew dependencies --no-daemon || true
+# Warm dependency cache with retry logic (handles transient network failures)
+RUN for i in 1 2 3; do \
+      echo "Attempt $i: Downloading dependencies..." && \
+      ./gradlew dependencies --no-daemon && break || \
+      (echo "Attempt $i failed, retrying..." && sleep 5); \
+    done
 
 # Copy sources
 COPY src ./src
