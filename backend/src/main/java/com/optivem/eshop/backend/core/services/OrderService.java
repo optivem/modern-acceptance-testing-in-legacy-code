@@ -198,13 +198,7 @@ public class OrderService {
     }
 
     private String generateOrderNumber() {
-        // Generate order number: ORD-YYYYMMDDHHMMSS-RND
-        // Readable, sortable, unique enough for practical use
-        var now = java.time.Instant.now();
-        var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
-                .withZone(java.time.ZoneOffset.UTC);
-        var timestamp = formatter.format(now);
-        var random = java.util.UUID.randomUUID().toString().substring(0, 3).toUpperCase();
-        return "ORD-" + timestamp + "-" + random;
+        var uuid = java.util.UUID.randomUUID().toString().toUpperCase();
+        return "ORD-" + uuid;
     }
 }
