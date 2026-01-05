@@ -38,3 +38,12 @@ body {
     background-color: #f8f9fa;
 }
 
+/* Order Status Colors */
+.status-PLACED {
+    color: #198754;
+}
+
+.status-CANCELLED {
+    color: #dc3545;
+}
+

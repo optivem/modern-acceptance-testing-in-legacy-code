@@ -1,4 +1,5 @@
-import { Layout, CouponForm, CouponTable } from '../components';
+import { Layout } from '../components';
+import { CouponForm, CouponTable } from '../features/coupons';
 import { useCoupons } from '../hooks';
 import { useNotificationContext } from '../contexts/NotificationContext';
 

@@ -6,8 +6,6 @@ export { Notification } from './Notification';
 export { LoadingSpinner } from './LoadingSpinner';
 export { ErrorMessage } from './ErrorMessage';
 export { ErrorBoundary } from './ErrorBoundary';
-export { CouponForm } from './CouponForm';
-export { CouponTable } from './CouponTable';
 export { FeatureCard } from './FeatureCard';
 export { DetailField } from './DetailField';
 export { FormInput } from './FormInput';

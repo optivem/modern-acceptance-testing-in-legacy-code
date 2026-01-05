@@ -1,5 +1,5 @@
-import { LoadingSpinner } from './LoadingSpinner';
-import type { BrowseCouponsItemResponse } from '../types/api.types';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
+import type { BrowseCouponsItemResponse } from '../../types/api.types';
 
 /**
  * Coupon table row component
