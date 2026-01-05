@@ -12,7 +12,7 @@ export function OrderDetails() {
   const handleCancel = async () => {
     const result = await cancelOrder();
     if (result.success) {
-      setNotification({ message: 'Order cancelled successfully', isError: false });
+      setNotification({ message: 'Order cancelled successfully!', isError: false });
     } else {
       const errorMessage = typeof result.error === 'string' ? result.error : result.error?.message || 'Failed to cancel order';
       setNotification({ message: errorMessage, isError: true });
