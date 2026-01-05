@@ -11,18 +11,13 @@ export function OrderDetails() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const navigate = useNavigate();
   const { order, isLoading, error, isCancelling, cancelOrder } = useOrderDetails(orderNumber);
-  const { successMessage, error: cancelError, clearNotification, setSuccess, setError } = useNotification();
+  const { successMessage, error: cancelError, setSuccess, handleResult } = useNotification();
 
   const handleCancel = useCallback(async () => {
-    clearNotification();
-    
-    const result = await cancelOrder();
-    if (result.success) {
+    handleResult(await cancelOrder(), () => {
       setSuccess('Order cancelled successfully!');
-    } else {
-      setError(result.error);
-    }
-  }, [cancelOrder, clearNotification, setSuccess, setError]);
+    });
+  }, [cancelOrder, setSuccess, handleResult]);
 
   return (
     <Layout

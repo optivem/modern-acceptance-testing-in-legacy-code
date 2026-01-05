@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { ApiError } from '../types/error.types';
+import type { Result } from '../types/result.types';
+import { match } from '../types/result.types';
 
 /**
  * Custom hook for managing notification state (success messages and errors)
@@ -25,11 +27,36 @@ export function useNotification() {
     setSuccessMessage(null);
   }, []);
 
+  /**
+   * Handles a Result by clearing notifications and auto-handling errors
+   * Only requires success handler - error case automatically calls setError
+   * 
+   * @param result - The Result to handle
+   * @param onSuccess - Handler called on success (error handled automatically)
+   * 
+   * @example
+   * handleResult(await submitCoupon(formData), () => {
+   *   setSuccess('Created!');
+   *   resetForm();
+   * });
+   */
+  const handleResult = useCallback(<T>(
+    result: Result<T>,
+    onSuccess: (data: T) => void
+  ) => {
+    clearNotification();
+    match(result, {
+      success: onSuccess,
+      error: (error) => setError(error)
+    });
+  }, [clearNotification, setError]);
+
   return {
     successMessage,
     error,
     clearNotification,
     setSuccess,
-    setError: setErrorMessage
+    setError: setErrorMessage,
+    handleResult
   };
 }

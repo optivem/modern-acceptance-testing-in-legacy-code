@@ -17,7 +17,7 @@ export function AdminCoupons() {
     refresh
   } = useCoupons();
 
-  const { successMessage, error, clearNotification, setSuccess, setError } = useNotification();
+  const { successMessage, error, setSuccess, handleResult } = useNotification();
   const [formData, setFormData] = useState({
     code: generateCouponCode(),
     discountRate: 0.2,
@@ -28,12 +28,10 @@ export function AdminCoupons() {
 
   const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
-    clearNotification();
 
-    const result = await submitCoupon(formData);
-
-    if (result.success) {
-      const createdCode = formData.code;
+    const createdCode = formData.code;
+    
+    handleResult(await submitCoupon(formData), () => {
       setSuccess(`Coupon '${createdCode}' created successfully!`);
       setFormData({
         code: generateCouponCode(),
@@ -42,10 +40,8 @@ export function AdminCoupons() {
         validTo: '',
         usageLimit: ''
       });
-    } else {
-      setError(result.error);
-    }
-  }, [submitCoupon, generateCouponCode, clearNotification, setSuccess, setError]);
+    });
+  }, [submitCoupon, generateCouponCode, setSuccess, handleResult, formData.code]);
 
   return (
     <Layout
