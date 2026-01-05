@@ -21,6 +21,17 @@
     border: 1px solid #f5c2c7;
 }
 
+/* Error message structure */
+.notification .error-message {
+    margin-bottom: 8px;
+}
+
+.notification .field-error {
+    margin-left: 12px;
+    margin-top: 4px;
+    font-weight: 400;
+}
+
 /* Additional Bootstrap enhancements */
 body {
     min-height: 100vh;

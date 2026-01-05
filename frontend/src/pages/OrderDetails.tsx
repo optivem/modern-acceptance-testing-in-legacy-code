@@ -1,0 +1,178 @@
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Layout } from '../components/Layout';
+import { Notification } from '../components/Notification';
+import { orderService } from '../services/order-service';
+import type { ViewOrderDetailsResponse } from '../types/api.types';
+
+export function OrderDetails() {
+  const { orderNumber } = useParams<{ orderNumber: string }>();
+  const navigate = useNavigate();
+  const [order, setOrder] = useState<ViewOrderDetailsResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ message: string; isError: boolean } | null>(null);
+
+  const loadOrderDetails = async () => {
+    if (!orderNumber) {
+      setError('No order number provided');
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    const result = await orderService.getOrder(orderNumber);
+    
+    if (result.success) {
+      setOrder(result.data);
+      setError(null);
+    } else {
+      setError(result.error.message);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadOrderDetails();
+  }, [orderNumber]);
+
+  const handleCancel = async () => {
+    if (!orderNumber) return;
+
+    const result = await orderService.cancelOrder(orderNumber);
+    if (result.success) {
+      setNotification({ message: 'Order cancelled successfully', isError: false });
+      loadOrderDetails();
+    } else {
+      setNotification({ message: result.error.message, isError: true });
+    }
+  };
+
+  return (
+    <Layout
+      title="Order Details"
+      breadcrumbs={[
+        { label: 'Home', path: '/' },
+        { label: 'Order History', path: '/order-history' },
+        { label: 'Order Details' }
+      ]}
+    >
+      {notification && (
+        <Notification
+          message={notification.message}
+          isError={notification.isError}
+        />
+      )}
+
+      <div className="card shadow">
+        <div className="card-header bg-primary text-white">
+          <h4 className="mb-0">Order Details</h4>
+        </div>
+        <div className="card-body">
+          {isLoading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              <p className="mt-3">Loading order details...</p>
+            </div>
+          ) : error ? (
+            <p className="text-danger">Error: {error}</p>
+          ) : order ? (
+            <>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <strong>Order Number:</strong>
+                  <p aria-label="Display Order Number">{order.orderNumber}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Order Timestamp:</strong>
+                  <p>{new Date(order.orderTimestamp).toLocaleString()}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Status:</strong>
+                  <p className={`status-${order.status}`} aria-label="Display Status">{order.status}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>SKU:</strong>
+                  <p aria-label="Display SKU">{order.sku}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Country:</strong>
+                  <p aria-label="Display Country">{order.country}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Quantity:</strong>
+                  <p aria-label="Display Quantity">{order.quantity}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Unit Price:</strong>
+                  <p aria-label="Display Unit Price">${order.unitPrice.toFixed(2)}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Base Price:</strong>
+                  <p aria-label="Display Base Price">${order.basePrice.toFixed(2)}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Discount Rate:</strong>
+                  <p aria-label="Display Discount Rate">{(order.discountRate * 100).toFixed(2)}%</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Discount Amount:</strong>
+                  <p aria-label="Display Discount Amount">${order.discountAmount.toFixed(2)}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Subtotal Price:</strong>
+                  <p aria-label="Display Subtotal Price">${order.subtotalPrice.toFixed(2)}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Tax Rate:</strong>
+                  <p aria-label="Display Tax Rate">{(order.taxRate * 100).toFixed(2)}%</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Tax Amount:</strong>
+                  <p aria-label="Display Tax Amount">${order.taxAmount.toFixed(2)}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Total Price:</strong>
+                  <p className="fs-5 fw-bold" aria-label="Display Total Price">${order.totalPrice.toFixed(2)}</p>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <strong>Applied Coupon:</strong>
+                  <p aria-label="Display Applied Coupon">{order.appliedCouponCode || 'None'}</p>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                {order.status === 'PLACED' && (
+                  <button 
+                    className="btn btn-danger me-2"
+                    aria-label="Cancel Order"
+                    onClick={handleCancel}
+                  >
+                    Cancel Order
+                  </button>
+                )}
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => navigate('/order-history')}
+                >
+                  Back to Order History
+                </button>
+              </div>
+            </>
+          ) : null}
+        </div>
+      </div>
+
+      <style>{`
+        .status-PLACED {
+          color: #198754;
+        }
+        .status-CANCELLED {
+          color: #dc3545;
+        }
+      `}</style>
+    </Layout>
+  );
+}
