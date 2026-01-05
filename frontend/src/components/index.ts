@@ -9,3 +9,4 @@ export { ErrorBoundary } from './ErrorBoundary';
 export { FeatureCard } from './FeatureCard';
 export { DetailField } from './DetailField';
 export { FormInput } from './FormInput';
+export { SubmitButton } from './SubmitButton';

@@ -1,4 +1,5 @@
 import { useState, FormEvent, useCallback } from 'react';
+import { SubmitButton } from '../../components/SubmitButton';
 
 export interface CouponFormData {
   code: string;
@@ -109,14 +110,13 @@ export function CouponForm({ onSubmit, isSubmitting, generateCouponCode }: Coupo
               />
             </div>
             <div className="col-md-6 d-flex align-items-end">
-              <button
-                type="submit"
+              <SubmitButton
+                isSubmitting={isSubmitting}
+                text="✨ Create Coupon"
+                loadingText="Creating..."
+                ariaLabel="Create Coupon"
                 className="btn btn-primary w-100"
-                aria-label="Create Coupon"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Creating...' : '✨ Create Coupon'}
-              </button>
+              />
             </div>
           </div>
         </form>
