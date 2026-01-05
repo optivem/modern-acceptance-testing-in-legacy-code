@@ -1,5 +1,6 @@
 import { FormEvent, useCallback } from 'react';
-import { Layout, Notification, FormInput } from '../components';
+import { Layout, FormInput } from '../components';
+import { useNotificationContext } from '../contexts/NotificationContext';
 import { useOrderForm } from '../hooks';
 
 /**
@@ -7,19 +8,20 @@ import { useOrderForm } from '../hooks';
  * Provides a form interface for customers to submit orders with SKU, quantity, country, and optional coupon
  */
 export function Shop() {
+  const { setSuccess, handleResult } = useNotificationContext();
   const {
     formData,
     updateFormData,
     isSubmitting,
-    error,
-    success,
     submitOrder
   } = useOrderForm();
 
   const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
-    await submitOrder();
-  }, [submitOrder]);
+    handleResult(await submitOrder(), (data) => {
+      setSuccess(`Success! Order has been created with Order Number ${data.orderNumber}`);
+    });
+  }, [submitOrder, handleResult, setSuccess]);
 
   return (
     <Layout title="Shop" breadcrumbs={[{ label: 'Home', path: '/' }, { label: 'Shop' }]}>
@@ -36,6 +38,7 @@ export function Shop() {
                   value={formData.sku}
                   onChange={(e) => updateFormData({ sku: e.target.value })}
                   placeholder="Enter product SKU"
+                  ariaLabel="SKU"
                 />
                 <FormInput
                   label="Quantity"
@@ -46,18 +49,21 @@ export function Shop() {
                   })}
                   inputMode="numeric"
                   placeholder="Enter quantity"
+                  ariaLabel="Quantity"
                 />
                 <FormInput
                   label="Country"
                   value={formData.country}
                   onChange={(e) => updateFormData({ country: e.target.value })}
                   placeholder="Enter country code"
+                  ariaLabel="Country"
                 />
                 <FormInput
                   label="Coupon Code (Optional)"
                   value={formData.couponCode || ''}
                   onChange={(e) => updateFormData({ couponCode: e.target.value || undefined })}
                   placeholder="Enter coupon code if available"
+                  ariaLabel="Coupon Code"
                 />
                 <div className="d-grid">
                   <button 
@@ -72,11 +78,6 @@ export function Shop() {
               </form>
             </div>
           </div>
-
-          <Notification
-            successMessage={success ? `Success! Order has been created with Order Number ${success.orderNumber}` : null}
-            error={error}
-          />
         </div>
       </div>
     </Layout>

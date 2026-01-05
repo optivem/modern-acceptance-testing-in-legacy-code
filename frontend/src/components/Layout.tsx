@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { Navbar } from './Navbar';
 import { Breadcrumb } from './Breadcrumb';
+import { Notification } from './Notification';
+import { useNotificationContext } from '../contexts/NotificationContext';
 
 interface BreadcrumbItem {
   label: string;
@@ -15,17 +17,20 @@ interface LayoutProps {
 
 /**
  * Layout wrapper component that provides consistent page structure
- * Includes navbar and optional breadcrumbs for all pages
+ * Includes navbar, notification, and optional breadcrumbs for all pages
  * @param children - Page content to render
  * @param title - Optional page title displayed in navbar
  * @param breadcrumbs - Optional breadcrumb navigation items
  */
 export function Layout({ children, title, breadcrumbs }: LayoutProps) {
+  const { successMessage, error } = useNotificationContext();
+  
   return (
     <>
       <Navbar title={title} />
       <div className="container mt-4">
         {breadcrumbs && <Breadcrumb items={breadcrumbs} />}
+        <Notification successMessage={successMessage} error={error} />
         {children}
       </div>
     </>

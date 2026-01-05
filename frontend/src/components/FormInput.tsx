@@ -5,7 +5,7 @@ export interface FormInputProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   id?: string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  ariaLabel?: string;
+  ariaLabel: string;
 }
 
 /**
@@ -31,7 +31,7 @@ export function FormInput({
         type="text"
         className="form-control"
         id={inputId}
-        aria-label={ariaLabel || label}
+        aria-label={ariaLabel}
         value={value}
         onChange={onChange}
         {...inputProps}

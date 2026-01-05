@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Layout, Notification, LoadingSpinner, ErrorMessage, DetailField } from '../components';
-import { useOrderDetails, useNotification } from '../hooks';
+import { Layout, LoadingSpinner, ErrorMessage, DetailField } from '../components';
+import { useOrderDetails } from '../hooks';
+import { useNotificationContext } from '../contexts/NotificationContext';
 
 /**
  * Order Details page component for viewing individual order information
@@ -11,7 +12,7 @@ export function OrderDetails() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const navigate = useNavigate();
   const { order, isLoading, error, isCancelling, cancelOrder } = useOrderDetails(orderNumber);
-  const { successMessage, error: cancelError, setSuccess, handleResult } = useNotification();
+  const { setSuccess, handleResult } = useNotificationContext();
 
   const handleCancel = useCallback(async () => {
     handleResult(await cancelOrder(), () => {
@@ -28,8 +29,6 @@ export function OrderDetails() {
         { label: 'Order Details' }
       ]}
     >
-      <Notification successMessage={successMessage} error={cancelError} />
-
       <div className="card shadow">
         <div className="card-header bg-primary text-white">
           <h4 className="mb-0">Order Details</h4>

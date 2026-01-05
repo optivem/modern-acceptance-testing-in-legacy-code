@@ -1,5 +1,6 @@
-import { Layout, Notification, CouponForm, CouponTable } from '../components';
-import { useCoupons, useNotification } from '../hooks';
+import { Layout, CouponForm, CouponTable } from '../components';
+import { useCoupons } from '../hooks';
+import { useNotificationContext } from '../contexts/NotificationContext';
 
 /**
  * Admin Coupons page component for managing promotional coupons
@@ -16,7 +17,7 @@ export function AdminCoupons() {
     refresh
   } = useCoupons();
 
-  const { successMessage, error, setSuccess, handleResult } = useNotification();
+  const { setSuccess, handleResult } = useNotificationContext();
 
   const handleCouponSubmit = async (formData: any) => {
     const createdCode = formData.code;
@@ -36,8 +37,6 @@ export function AdminCoupons() {
         isSubmitting={isCreating}
         generateCouponCode={generateCouponCode}
       />
-
-      <Notification successMessage={successMessage} error={error} />
 
       <CouponTable 
         coupons={coupons}
