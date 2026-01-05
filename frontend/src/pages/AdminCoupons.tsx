@@ -1,7 +1,11 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useCallback } from 'react';
 import { Layout, Notification } from '../components';
 import { useCoupons } from '../hooks';
 
+/**
+ * Admin Coupons page component for managing promotional coupons
+ * Allows administrators to create and view coupons with discount rates, validity periods, and usage limits
+ */
 export function AdminCoupons() {
   const {
     coupons,
@@ -22,7 +26,7 @@ export function AdminCoupons() {
     usageLimit: ''
   });
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
     setNotification(null);
 
@@ -46,7 +50,7 @@ export function AdminCoupons() {
         (result.error.fieldErrors ? '\n' + result.error.fieldErrors.join('\n') : '');
       setNotification({ message: errorMessage, isError: true });
     }
-  };
+  }, [submitCoupon, generateCouponCode]);
 
   return (
     <Layout

@@ -1,7 +1,11 @@
-import { FormEvent } from 'react';
+import { FormEvent, useCallback } from 'react';
 import { Layout, Notification } from '../components';
 import { useOrderForm } from '../hooks';
 
+/**
+ * Shop page component for placing orders
+ * Provides a form interface for customers to submit orders with SKU, quantity, country, and optional coupon
+ */
 export function Shop() {
   const {
     formData,
@@ -12,10 +16,10 @@ export function Shop() {
     submitOrder
   } = useOrderForm();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
     await submitOrder();
-  };
+  }, [submitOrder]);
 
   return (
     <Layout title="Shop" breadcrumbs={[{ label: 'Home', path: '/' }, { label: 'Shop' }]}>

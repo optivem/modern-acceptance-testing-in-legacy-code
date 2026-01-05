@@ -2,6 +2,10 @@ import { Link } from 'react-router-dom';
 import { Layout, LoadingSpinner, ErrorMessage } from '../components';
 import { useOrders } from '../hooks';
 
+/**
+ * Order History page component for browsing past orders
+ * Provides filtering by order number and displays order details in a table
+ */
 export function OrderHistory() {
   const { orders, filter, setFilter, isLoading, error, refresh } = useOrders();
 

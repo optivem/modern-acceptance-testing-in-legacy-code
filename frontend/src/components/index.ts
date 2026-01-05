@@ -5,3 +5,4 @@ export { Breadcrumb } from './Breadcrumb';
 export { Notification } from './Notification';
 export { LoadingSpinner } from './LoadingSpinner';
 export { ErrorMessage } from './ErrorMessage';
+export { ErrorBoundary } from './ErrorBoundary';

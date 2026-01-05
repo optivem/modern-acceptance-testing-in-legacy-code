@@ -9,6 +9,11 @@ interface ValidationError {
   message: string;
 }
 
+/**
+ * Custom hook for managing order form state, validation, and submission
+ * Handles all business logic for placing orders including client-side validation
+ * @returns Form state, submission state, and control functions
+ */
 export function useOrderForm() {
   const [formData, setFormData] = useState<OrderFormData>({
     sku: '',

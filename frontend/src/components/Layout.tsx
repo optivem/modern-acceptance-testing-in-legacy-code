@@ -13,6 +13,13 @@ interface LayoutProps {
   breadcrumbs?: BreadcrumbItem[];
 }
 
+/**
+ * Layout wrapper component that provides consistent page structure
+ * Includes navbar and optional breadcrumbs for all pages
+ * @param children - Page content to render
+ * @param title - Optional page title displayed in navbar
+ * @param breadcrumbs - Optional breadcrumb navigation items
+ */
 export function Layout({ children, title, breadcrumbs }: LayoutProps) {
   return (
     <>

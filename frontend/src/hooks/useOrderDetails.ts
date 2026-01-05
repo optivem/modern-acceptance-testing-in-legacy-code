@@ -2,6 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { orderService } from '../services/order-service';
 import type { ViewOrderDetailsResponse } from '../types/api.types';
 
+/**
+ * Custom hook for managing order details and cancellation
+ * @param orderNumber - The order number to fetch details for
+ * @returns Order details state, loading states, and control functions
+ */
 export function useOrderDetails(orderNumber: string | undefined) {
   const [order, setOrder] = useState<ViewOrderDetailsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);

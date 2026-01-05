@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { browseCoupons, createCoupon } from '../services/coupon-service';
 import type { BrowseCouponsItemResponse } from '../types/api.types';
 
+/**
+ * Form data structure for coupon creation
+ */
 interface CouponFormData {
   code: string;
   discountRate: number;
@@ -10,6 +13,10 @@ interface CouponFormData {
   usageLimit: string;
 }
 
+/**
+ * Custom hook for managing coupons (browsing and creation)
+ * @returns Coupon state, loading states, and control functions
+ */
 export function useCoupons() {
   const [coupons, setCoupons] = useState<BrowseCouponsItemResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);

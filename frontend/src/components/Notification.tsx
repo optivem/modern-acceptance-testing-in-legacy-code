@@ -3,6 +3,12 @@ interface NotificationProps {
   isError?: boolean;
 }
 
+/**
+ * Notification component for displaying success or error messages
+ * Supports multi-line messages with field-level error formatting
+ * @param message - Notification message (can be multi-line with \n separator)
+ * @param isError - Whether this is an error (true) or success (false) notification
+ */
 export function Notification({ message, isError = false }: NotificationProps) {
   // Success notifications now stay visible until the next action
 

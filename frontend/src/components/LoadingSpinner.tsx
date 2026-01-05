@@ -3,6 +3,11 @@ interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
+/**
+ * Loading spinner component for displaying loading states
+ * @param message - Optional loading message to display
+ * @param size - Size variant (sm, md, lg)
+ */
 export function LoadingSpinner({ message = 'Loading...', size = 'md' }: LoadingSpinnerProps) {
   const sizeClass = size === 'sm' ? 'spinner-border-sm' : '';
   

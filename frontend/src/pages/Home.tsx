@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '../components';
 
+/**
+ * Home page component displaying the main landing page
+ * Provides navigation to key features: Shop, Order History, and Coupon Management
+ */
 export function Home() {
   return (
     <Layout>

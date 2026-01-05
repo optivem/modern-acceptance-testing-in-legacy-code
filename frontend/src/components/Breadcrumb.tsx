@@ -9,6 +9,10 @@ interface BreadcrumbProps {
   items: BreadcrumbItem[];
 }
 
+/**
+ * Breadcrumb navigation component for showing page hierarchy
+ * @param items - Array of breadcrumb items with labels and optional paths
+ */
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
     <nav aria-label="breadcrumb">

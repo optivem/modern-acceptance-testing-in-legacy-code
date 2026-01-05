@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout, Notification, LoadingSpinner, ErrorMessage } from '../components';
 import { useOrderDetails } from '../hooks';
 
+/**
+ * Order Details page component for viewing individual order information
+ * Allows users to view detailed order information and cancel orders if status is PLACED
+ */
 export function OrderDetails() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const navigate = useNavigate();
   const { order, isLoading, error, isCancelling, cancelOrder } = useOrderDetails(orderNumber);
   const [notification, setNotification] = useState<{ message: string; isError: boolean } | null>(null);
 
-  const handleCancel = async () => {
+  const handleCancel = useCallback(async () => {
     const result = await cancelOrder();
     if (result.success) {
       setNotification({ message: 'Order cancelled successfully!', isError: false });
@@ -17,7 +21,7 @@ export function OrderDetails() {
       const errorMessage = typeof result.error === 'string' ? result.error : result.error?.message || 'Failed to cancel order';
       setNotification({ message: errorMessage, isError: true });
     }
-  };
+  }, [cancelOrder]);
 
   return (
     <Layout
