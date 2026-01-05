@@ -1,32 +1,9 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Layout } from '../components/Layout';
-import { orderService } from '../services/order-service';
-import type { BrowseOrderHistoryItemResponse } from '../types/api.types';
+import { Layout, LoadingSpinner, ErrorMessage } from '../components';
+import { useOrders } from '../hooks';
 
 export function OrderHistory() {
-  const [orders, setOrders] = useState<BrowseOrderHistoryItemResponse[]>([]);
-  const [filter, setFilter] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadOrders = async (filterValue: string = '') => {
-    setIsLoading(true);
-    setError(null);
-    
-    const result = await orderService.browseOrderHistory(filterValue);
-    
-    if (result.success) {
-      setOrders(result.data.orders);
-    } else {
-      setError(result.error.message);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    loadOrders(filter);
-  }, [filter]);
+  const { orders, filter, setFilter, isLoading, error, refresh } = useOrders();
 
   return (
     <Layout 
@@ -57,7 +34,7 @@ export function OrderHistory() {
               <button
                 className="btn btn-primary w-100"
                 aria-label="Search"
-                onClick={() => loadOrders(filter)}
+                onClick={refresh}
               >
                 🔄 Refresh
               </button>
@@ -82,17 +59,14 @@ export function OrderHistory() {
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan={9} className="text-center">
-                      <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                      <p className="mt-2">Loading orders...</p>
+                    <td colSpan={9}>
+                      <LoadingSpinner message="Loading orders..." />
                     </td>
                   </tr>
                 ) : error ? (
                   <tr>
-                    <td colSpan={9} className="text-center text-danger">
-                      Failed to load orders: {error}
+                    <td colSpan={9}>
+                      <ErrorMessage message={error} onRetry={refresh} />
                     </td>
                   </tr>
                 ) : orders.length === 0 ? (

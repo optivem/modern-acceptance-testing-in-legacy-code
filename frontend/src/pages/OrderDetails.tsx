@@ -1,50 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Layout } from '../components/Layout';
-import { Notification } from '../components/Notification';
-import { orderService } from '../services/order-service';
-import type { ViewOrderDetailsResponse } from '../types/api.types';
+import { Layout, Notification, LoadingSpinner, ErrorMessage } from '../components';
+import { useOrderDetails } from '../hooks';
 
 export function OrderDetails() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const navigate = useNavigate();
-  const [order, setOrder] = useState<ViewOrderDetailsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { order, isLoading, error, isCancelling, cancelOrder } = useOrderDetails(orderNumber);
   const [notification, setNotification] = useState<{ message: string; isError: boolean } | null>(null);
 
-  const loadOrderDetails = async () => {
-    if (!orderNumber) {
-      setError('No order number provided');
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    const result = await orderService.getOrder(orderNumber);
-    
-    if (result.success) {
-      setOrder(result.data);
-      setError(null);
-    } else {
-      setError(result.error.message);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    loadOrderDetails();
-  }, [orderNumber]);
-
   const handleCancel = async () => {
-    if (!orderNumber) return;
-
-    const result = await orderService.cancelOrder(orderNumber);
+    const result = await cancelOrder();
     if (result.success) {
       setNotification({ message: 'Order cancelled successfully', isError: false });
-      loadOrderDetails();
     } else {
-      setNotification({ message: result.error.message, isError: true });
+      const errorMessage = typeof result.error === 'string' ? result.error : result.error?.message || 'Failed to cancel order';
+      setNotification({ message: errorMessage, isError: true });
     }
   };
 
@@ -70,14 +41,9 @@ export function OrderDetails() {
         </div>
         <div className="card-body">
           {isLoading ? (
-            <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-              <p className="mt-3">Loading order details...</p>
-            </div>
+            <LoadingSpinner message="Loading order details..." />
           ) : error ? (
-            <p className="text-danger">Error: {error}</p>
+            <ErrorMessage message={error} />
           ) : order ? (
             <>
               <div className="row">
@@ -149,8 +115,9 @@ export function OrderDetails() {
                     className="btn btn-danger me-2"
                     aria-label="Cancel Order"
                     onClick={handleCancel}
+                    disabled={isCancelling}
                   >
-                    Cancel Order
+                    {isCancelling ? 'Cancelling...' : 'Cancel Order'}
                   </button>
                 )}
                 <button 

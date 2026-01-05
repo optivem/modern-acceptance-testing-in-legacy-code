@@ -1,9 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { Shop } from './pages/Shop';
-import { OrderHistory } from './pages/OrderHistory';
-import { OrderDetails } from './pages/OrderDetails';
-import { AdminCoupons } from './pages/AdminCoupons';
+import { Home, Shop, OrderHistory, OrderDetails, AdminCoupons } from './pages';
 
 export function App() {
   return (
