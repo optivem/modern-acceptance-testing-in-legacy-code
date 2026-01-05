@@ -135,12 +135,7 @@ export function AdminCoupons() {
         </div>
       </div>
 
-      {(successMessage || error) && (
-        <Notification
-          successMessage={successMessage}
-          error={error}
-        />
-      )}
+      <Notification successMessage={successMessage} error={error} />
 
       <div className="card shadow">
         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">

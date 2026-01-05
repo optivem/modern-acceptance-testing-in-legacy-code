@@ -28,12 +28,7 @@ export function OrderDetails() {
         { label: 'Order Details' }
       ]}
     >
-      {(successMessage || cancelError) && (
-        <Notification
-          successMessage={successMessage}
-          error={cancelError}
-        />
-      )}
+      <Notification successMessage={successMessage} error={cancelError} />
 
       <div className="card shadow">
         <div className="card-header bg-primary text-white">
