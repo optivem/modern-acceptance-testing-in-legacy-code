@@ -1,5 +1,5 @@
 import { FormEvent, useCallback } from 'react';
-import { Layout, Notification } from '../components';
+import { Layout, Notification, FormInput } from '../components';
 import { useOrderForm } from '../hooks';
 
 /**
@@ -31,58 +31,34 @@ export function Shop() {
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="sku" className="form-label">SKU:</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="sku"
-                    aria-label="SKU"
-                    value={formData.sku}
-                    onChange={(e) => updateFormData({ sku: e.target.value })}
-                    placeholder="Enter product SKU"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="quantity" className="form-label">Quantity:</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="quantity"
-                    aria-label="Quantity"
-                    value={formData.quantityValue}
-                    onChange={(e) => updateFormData({ 
-                      quantityValue: e.target.value,
-                      quantity: parseInt(e.target.value) || 0
-                    })}
-                    inputMode="numeric"
-                    placeholder="Enter quantity"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="country" className="form-label">Country:</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="country"
-                    aria-label="Country"
-                    value={formData.country}
-                    onChange={(e) => updateFormData({ country: e.target.value })}
-                    placeholder="Enter country code"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="couponCode" className="form-label">Coupon Code (Optional):</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="couponCode"
-                    aria-label="Coupon Code"
-                    value={formData.couponCode || ''}
-                    onChange={(e) => updateFormData({ couponCode: e.target.value || undefined })}
-                    placeholder="Enter coupon code if available"
-                  />
-                </div>
+                <FormInput
+                  label="SKU"
+                  value={formData.sku}
+                  onChange={(e) => updateFormData({ sku: e.target.value })}
+                  placeholder="Enter product SKU"
+                />
+                <FormInput
+                  label="Quantity"
+                  value={formData.quantityValue}
+                  onChange={(e) => updateFormData({ 
+                    quantityValue: e.target.value,
+                    quantity: parseInt(e.target.value) || 0
+                  })}
+                  inputMode="numeric"
+                  placeholder="Enter quantity"
+                />
+                <FormInput
+                  label="Country"
+                  value={formData.country}
+                  onChange={(e) => updateFormData({ country: e.target.value })}
+                  placeholder="Enter country code"
+                />
+                <FormInput
+                  label="Coupon Code (Optional)"
+                  value={formData.couponCode || ''}
+                  onChange={(e) => updateFormData({ couponCode: e.target.value || undefined })}
+                  placeholder="Enter coupon code if available"
+                />
                 <div className="d-grid">
                   <button 
                     type="submit" 

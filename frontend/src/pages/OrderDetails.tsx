@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Layout, Notification, LoadingSpinner, ErrorMessage } from '../components';
+import { Layout, Notification, LoadingSpinner, ErrorMessage, DetailField } from '../components';
 import { useOrderDetails, useNotification } from '../hooks';
 
 /**
@@ -42,66 +42,31 @@ export function OrderDetails() {
           ) : order ? (
             <>
               <div className="row">
-                <div className="col-md-6 mb-3">
-                  <strong>Order Number:</strong>
-                  <p aria-label="Display Order Number">{order.orderNumber}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Order Timestamp:</strong>
-                  <p>{new Date(order.orderTimestamp).toLocaleString()}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Status:</strong>
-                  <p className={`status-${order.status}`} aria-label="Display Status">{order.status}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>SKU:</strong>
-                  <p aria-label="Display SKU">{order.sku}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Country:</strong>
-                  <p aria-label="Display Country">{order.country}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Quantity:</strong>
-                  <p aria-label="Display Quantity">{order.quantity}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Unit Price:</strong>
-                  <p aria-label="Display Unit Price">${order.unitPrice.toFixed(2)}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Base Price:</strong>
-                  <p aria-label="Display Base Price">${order.basePrice.toFixed(2)}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Discount Rate:</strong>
-                  <p aria-label="Display Discount Rate">{(order.discountRate * 100).toFixed(2)}%</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Discount Amount:</strong>
-                  <p aria-label="Display Discount Amount">${order.discountAmount.toFixed(2)}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Subtotal Price:</strong>
-                  <p aria-label="Display Subtotal Price">${order.subtotalPrice.toFixed(2)}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Tax Rate:</strong>
-                  <p aria-label="Display Tax Rate">{(order.taxRate * 100).toFixed(2)}%</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Tax Amount:</strong>
-                  <p aria-label="Display Tax Amount">${order.taxAmount.toFixed(2)}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Total Price:</strong>
-                  <p className="fs-5 fw-bold" aria-label="Display Total Price">${order.totalPrice.toFixed(2)}</p>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <strong>Applied Coupon:</strong>
-                  <p aria-label="Display Applied Coupon">{order.appliedCouponCode || 'None'}</p>
-                </div>
+                <DetailField label="Order Number" value={order.orderNumber} ariaLabel="Display Order Number" />
+                <DetailField label="Order Timestamp" value={new Date(order.orderTimestamp).toLocaleString()} />
+                <DetailField 
+                  label="Status" 
+                  value={order.status} 
+                  valueClassName={`status-${order.status}`}
+                  ariaLabel="Display Status" 
+                />
+                <DetailField label="SKU" value={order.sku} ariaLabel="Display SKU" />
+                <DetailField label="Country" value={order.country} ariaLabel="Display Country" />
+                <DetailField label="Quantity" value={order.quantity} ariaLabel="Display Quantity" />
+                <DetailField label="Unit Price" value={`$${order.unitPrice.toFixed(2)}`} ariaLabel="Display Unit Price" />
+                <DetailField label="Base Price" value={`$${order.basePrice.toFixed(2)}`} ariaLabel="Display Base Price" />
+                <DetailField label="Discount Rate" value={`${(order.discountRate * 100).toFixed(2)}%`} ariaLabel="Display Discount Rate" />
+                <DetailField label="Discount Amount" value={`$${order.discountAmount.toFixed(2)}`} ariaLabel="Display Discount Amount" />
+                <DetailField label="Subtotal Price" value={`$${order.subtotalPrice.toFixed(2)}`} ariaLabel="Display Subtotal Price" />
+                <DetailField label="Tax Rate" value={`${(order.taxRate * 100).toFixed(2)}%`} ariaLabel="Display Tax Rate" />
+                <DetailField label="Tax Amount" value={`$${order.taxAmount.toFixed(2)}`} ariaLabel="Display Tax Amount" />
+                <DetailField 
+                  label="Total Price" 
+                  value={`$${order.totalPrice.toFixed(2)}`} 
+                  valueClassName="fs-5 fw-bold"
+                  ariaLabel="Display Total Price" 
+                />
+                <DetailField label="Applied Coupon" value={order.appliedCouponCode || 'None'} ariaLabel="Display Applied Coupon" />
               </div>
 
               <div className="mt-4">
