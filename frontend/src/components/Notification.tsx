@@ -1,39 +1,36 @@
+import type { ApiError } from '../types/error.types';
+
 interface NotificationProps {
-  message: string | null;
-  isError?: boolean;
+  successMessage?: string | null;
+  error?: ApiError | null;
 }
 
 /**
  * Notification component for displaying success or error messages
- * Supports multi-line messages with field-level error formatting
- * @param message - Notification message (can be multi-line with \n separator)
- * @param isError - Whether this is an error (true) or success (false) notification
+ * @param successMessage - Success message string to display
+ * @param error - ApiError object with message and optional field-level errors
  */
-export function Notification({ message, isError = false }: NotificationProps) {
-  // Success notifications now stay visible until the next action
+export function Notification({ successMessage, error }: NotificationProps) {
+  // Handle error messages
+  if (error) {
+    return (
+      <div className="notification error" role="alert">
+        <div className="error-message">{error.message}</div>
+        {error.fieldErrors && error.fieldErrors.map((fieldError, index) => (
+          <div key={index} className="field-error">{fieldError}</div>
+        ))}
+      </div>
+    );
+  }
 
-  if (!message) return null;
+  // Handle success messages
+  if (successMessage) {
+    return (
+      <div className="notification success" role="alert">
+        {successMessage}
+      </div>
+    );
+  }
 
-  // Split message by newlines for proper error formatting
-  const lines = message.split('\n').filter(line => line.trim());
-
-  return (
-    <div
-      className={`notification ${isError ? 'error' : 'success'}`}
-      role="alert"
-    >
-      {lines.length > 1 ? (
-        // Multiple lines - format as general message + field errors
-        <>
-          <div className="error-message">{lines[0]}</div>
-          {lines.slice(1).map((line, index) => (
-            <div key={index} className="field-error">{line}</div>
-          ))}
-        </>
-      ) : (
-        // Single line - display as-is
-        message
-      )}
-    </div>
-  );
+  return null;
 }

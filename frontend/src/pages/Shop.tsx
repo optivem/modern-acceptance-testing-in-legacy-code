@@ -100,8 +100,8 @@ export function Shop() {
           {(error || success) && (
             <div className="mt-3">
               <Notification
-                message={error || (success ? `Success! Order has been created with Order Number ${success.orderNumber}` : null)}
-                isError={!!error}
+                successMessage={success ? `Success! Order has been created with Order Number ${success.orderNumber}` : null}
+                error={error}
               />
             </div>
           )}

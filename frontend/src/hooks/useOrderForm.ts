@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { orderService } from '../services/order-service';
 import type { OrderFormData } from '../types/form.types';
 import type { PlaceOrderResponse } from '../types/api.types';
 import type { Result } from '../types/result.types';
+import type { ApiError } from '../types/error.types';
 
 interface ValidationError {
   field: string;
@@ -23,7 +24,7 @@ export function useOrderForm() {
     couponCode: undefined
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiError | null>(null);
   const [success, setSuccess] = useState<PlaceOrderResponse | null>(null);
 
   const validateFormData = (data: OrderFormData): ValidationError[] => {
@@ -55,21 +56,25 @@ export function useOrderForm() {
     return errors;
   };
 
-  const submitOrder = async (): Promise<Result<PlaceOrderResponse>> => {
+  const clearNotification = useCallback(() => {
     setError(null);
     setSuccess(null);
+  }, []);
+
+  const submitOrder = async (): Promise<Result<PlaceOrderResponse>> => {
+    // Clear any previous notifications
+    clearNotification();
 
     const validationErrors = validateFormData(formData);
     if (validationErrors.length > 0) {
-      const errorMessage = 'The request contains one or more validation errors\n' +
-        validationErrors.map(e => `${e.field}: ${e.message}`).join('\n');
-      setError(errorMessage);
+      const apiError = {
+        message: 'The request contains one or more validation errors',
+        fieldErrors: validationErrors.map(e => `${e.field}: ${e.message}`)
+      };
+      setError(apiError);
       return {
         success: false,
-        error: {
-          message: 'The request contains one or more validation errors',
-          fieldErrors: validationErrors.map(e => `${e.field}: ${e.message}`)
-        }
+        error: apiError
       };
     }
 
@@ -93,9 +98,7 @@ export function useOrderForm() {
         couponCode: undefined
       });
     } else {
-      const errorMessage = result.error.message +
-        (result.error.fieldErrors ? '\n' + result.error.fieldErrors.join('\n') : '');
-      setError(errorMessage);
+      setError(result.error);
     }
 
     return result;
@@ -113,8 +116,7 @@ export function useOrderForm() {
       quantityValue: '',
       couponCode: undefined
     });
-    setError(null);
-    setSuccess(null);
+    clearNotification();
   };
 
   return {
@@ -124,6 +126,7 @@ export function useOrderForm() {
     error,
     success,
     submitOrder,
-    resetForm
+    resetForm,
+    clearNotification
   };
 }

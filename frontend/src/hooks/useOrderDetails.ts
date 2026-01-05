@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { orderService } from '../services/order-service';
 import type { ViewOrderDetailsResponse } from '../types/api.types';
+import type { Result } from '../types/result.types';
 
 /**
  * Custom hook for managing order details and cancellation
@@ -36,8 +37,13 @@ export function useOrderDetails(orderNumber: string | undefined) {
     loadOrderDetails();
   }, [loadOrderDetails]);
 
-  const cancelOrder = async () => {
-    if (!orderNumber) return { success: false, error: 'No order number' };
+  const cancelOrder = async (): Promise<Result<void>> => {
+    if (!orderNumber) {
+      return { 
+        success: false, 
+        error: { message: 'No order number' } 
+      };
+    }
 
     setIsCancelling(true);
     const result = await orderService.cancelOrder(orderNumber);

@@ -1,6 +1,6 @@
 import { useState, FormEvent, useCallback } from 'react';
 import { Layout, Notification } from '../components';
-import { useCoupons } from '../hooks';
+import { useCoupons, useNotification } from '../hooks';
 
 /**
  * Admin Coupons page component for managing promotional coupons
@@ -17,7 +17,7 @@ export function AdminCoupons() {
     refresh
   } = useCoupons();
 
-  const [notification, setNotification] = useState<{ message: string; isError: boolean } | null>(null);
+  const { successMessage, error, clearNotification, setSuccess, setError } = useNotification();
   const [formData, setFormData] = useState({
     code: generateCouponCode(),
     discountRate: 0.2,
@@ -28,16 +28,13 @@ export function AdminCoupons() {
 
   const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
-    setNotification(null);
+    clearNotification();
 
     const result = await submitCoupon(formData);
 
     if (result.success) {
       const createdCode = formData.code;
-      setNotification({
-        message: `Coupon '${createdCode}' created successfully!`,
-        isError: false
-      });
+      setSuccess(`Coupon '${createdCode}' created successfully!`);
       setFormData({
         code: generateCouponCode(),
         discountRate: 0.2,
@@ -46,11 +43,9 @@ export function AdminCoupons() {
         usageLimit: ''
       });
     } else {
-      const errorMessage = result.error.message +
-        (result.error.fieldErrors ? '\n' + result.error.fieldErrors.join('\n') : '');
-      setNotification({ message: errorMessage, isError: true });
+      setError(result.error);
     }
-  }, [submitCoupon, generateCouponCode]);
+  }, [submitCoupon, generateCouponCode, clearNotification, setSuccess, setError]);
 
   return (
     <Layout
@@ -144,10 +139,10 @@ export function AdminCoupons() {
         </div>
       </div>
 
-      {notification && (
+      {(successMessage || error) && (
         <Notification
-          message={notification.message}
-          isError={notification.isError}
+          successMessage={successMessage}
+          error={error}
         />
       )}
 

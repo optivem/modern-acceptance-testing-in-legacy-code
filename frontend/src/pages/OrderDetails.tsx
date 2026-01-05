@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout, Notification, LoadingSpinner, ErrorMessage } from '../components';
-import { useOrderDetails } from '../hooks';
+import { useOrderDetails, useNotification } from '../hooks';
 
 /**
  * Order Details page component for viewing individual order information
@@ -11,17 +11,18 @@ export function OrderDetails() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const navigate = useNavigate();
   const { order, isLoading, error, isCancelling, cancelOrder } = useOrderDetails(orderNumber);
-  const [notification, setNotification] = useState<{ message: string; isError: boolean } | null>(null);
+  const { successMessage, error: cancelError, clearNotification, setSuccess, setError } = useNotification();
 
   const handleCancel = useCallback(async () => {
+    clearNotification();
+    
     const result = await cancelOrder();
     if (result.success) {
-      setNotification({ message: 'Order cancelled successfully!', isError: false });
+      setSuccess('Order cancelled successfully!');
     } else {
-      const errorMessage = typeof result.error === 'string' ? result.error : result.error?.message || 'Failed to cancel order';
-      setNotification({ message: errorMessage, isError: true });
+      setError(result.error);
     }
-  }, [cancelOrder]);
+  }, [cancelOrder, clearNotification, setSuccess, setError]);
 
   return (
     <Layout
@@ -32,10 +33,10 @@ export function OrderDetails() {
         { label: 'Order Details' }
       ]}
     >
-      {notification && (
+      {(successMessage || cancelError) && (
         <Notification
-          message={notification.message}
-          isError={notification.isError}
+          successMessage={successMessage}
+          error={cancelError}
         />
       )}
 
