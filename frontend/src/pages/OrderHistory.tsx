@@ -1,6 +1,30 @@
 import { Link } from 'react-router-dom';
 import { Layout, LoadingSpinner, ErrorMessage } from '../components';
 import { useOrders } from '../hooks';
+import type { BrowseOrderHistoryItemResponse } from '../types/api.types';
+
+/**
+ * Order table row component
+ */
+function OrderRow({ order }: { order: BrowseOrderHistoryItemResponse }) {
+  return (
+    <tr key={order.orderNumber}>
+      <td>{order.orderNumber}</td>
+      <td>{new Date(order.orderTimestamp).toLocaleString()}</td>
+      <td>{order.sku}</td>
+      <td>{order.country}</td>
+      <td>{order.quantity}</td>
+      <td>${order.totalPrice.toFixed(2)}</td>
+      <td className={`status-${order.status}`}>{order.status}</td>
+      <td>{order.appliedCouponCode || 'None'}</td>
+      <td>
+        <Link to={`/order-details/${encodeURIComponent(order.orderNumber)}`}>
+          View Details
+        </Link>
+      </td>
+    </tr>
+  );
+}
 
 /**
  * Order History page component for browsing past orders
@@ -8,6 +32,40 @@ import { useOrders } from '../hooks';
  */
 export function OrderHistory() {
   const { orders, filter, setFilter, isLoading, error, refresh } = useOrders();
+
+  const renderTableBody = () => {
+    if (isLoading) {
+      return (
+        <tr>
+          <td colSpan={9}>
+            <LoadingSpinner message="Loading orders..." />
+          </td>
+        </tr>
+      );
+    }
+
+    if (error) {
+      return (
+        <tr>
+          <td colSpan={9}>
+            <ErrorMessage message={error} onRetry={refresh} />
+          </td>
+        </tr>
+      );
+    }
+
+    if (orders.length === 0) {
+      return (
+        <tr>
+          <td colSpan={9} className="text-center">
+            No orders found
+          </td>
+        </tr>
+      );
+    }
+
+    return orders.map((order) => <OrderRow key={order.orderNumber} order={order} />);
+  };
 
   return (
     <Layout 
@@ -61,43 +119,7 @@ export function OrderHistory() {
                 </tr>
               </thead>
               <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={9}>
-                      <LoadingSpinner message="Loading orders..." />
-                    </td>
-                  </tr>
-                ) : error ? (
-                  <tr>
-                    <td colSpan={9}>
-                      <ErrorMessage message={error} onRetry={refresh} />
-                    </td>
-                  </tr>
-                ) : orders.length === 0 ? (
-                  <tr>
-                    <td colSpan={9} className="text-center">
-                      No orders found
-                    </td>
-                  </tr>
-                ) : (
-                  orders.map((order) => (
-                    <tr key={order.orderNumber}>
-                      <td>{order.orderNumber}</td>
-                      <td>{new Date(order.orderTimestamp).toLocaleString()}</td>
-                      <td>{order.sku}</td>
-                      <td>{order.country}</td>
-                      <td>{order.quantity}</td>
-                      <td>${order.totalPrice.toFixed(2)}</td>
-                      <td className={`status-${order.status}`}>{order.status}</td>
-                      <td>{order.appliedCouponCode || 'None'}</td>
-                      <td>
-                        <Link to={`/order-details/${encodeURIComponent(order.orderNumber)}`}>
-                          View Details
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                {renderTableBody()}
               </tbody>
             </table>
           </div>

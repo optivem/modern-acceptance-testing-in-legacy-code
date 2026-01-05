@@ -1,6 +1,36 @@
 import { useState, FormEvent, useCallback } from 'react';
-import { Layout, Notification } from '../components';
+import { Layout, Notification, LoadingSpinner } from '../components';
 import { useCoupons, useNotification } from '../hooks';
+import type { BrowseCouponsItemResponse } from '../types/api.types';
+
+/**
+ * Coupon table row component
+ */
+function CouponRow({ coupon, getCouponStatus }: { coupon: BrowseCouponsItemResponse; getCouponStatus: (coupon: BrowseCouponsItemResponse) => string }) {
+  return (
+    <tr key={coupon.code}>
+      <td>{coupon.code}</td>
+      <td>{(coupon.discountRate * 100).toFixed(2)}%</td>
+      <td>
+        {coupon.validFrom 
+          ? new Date(coupon.validFrom).toLocaleString() 
+          : 'Immediate'}
+      </td>
+      <td>
+        {coupon.validTo 
+          ? new Date(coupon.validTo).toLocaleString() 
+          : 'Never'}
+      </td>
+      <td>
+        {coupon.usageLimit === null || coupon.usageLimit === 2147483647
+          ? 'Unlimited'
+          : coupon.usageLimit}
+      </td>
+      <td>{coupon.usedCount}</td>
+      <td>{getCouponStatus(coupon)}</td>
+    </tr>
+  );
+}
 
 /**
  * Admin Coupons page component for managing promotional coupons
@@ -42,6 +72,32 @@ export function AdminCoupons() {
       });
     });
   }, [submitCoupon, generateCouponCode, setSuccess, handleResult, formData.code]);
+
+  const renderTableBody = () => {
+    if (isLoading) {
+      return (
+        <tr>
+          <td colSpan={7} className="text-center">
+            <LoadingSpinner message="Loading coupons..." />
+          </td>
+        </tr>
+      );
+    }
+
+    if (coupons.length === 0) {
+      return (
+        <tr>
+          <td colSpan={7} className="text-center">
+            No coupons found
+          </td>
+        </tr>
+      );
+    }
+
+    return coupons.map((coupon) => (
+      <CouponRow key={coupon.code} coupon={coupon} getCouponStatus={getCouponStatus} />
+    ));
+  };
 
   return (
     <Layout
@@ -159,46 +215,7 @@ export function AdminCoupons() {
                 </tr>
               </thead>
               <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={7} className="text-center">
-                      <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                      <p className="mt-2">Loading coupons...</p>
-                    </td>
-                  </tr>
-                ) : coupons.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="text-center">
-                      No coupons found
-                    </td>
-                  </tr>
-                ) : (
-                  coupons.map((coupon) => (
-                    <tr key={coupon.code}>
-                      <td>{coupon.code}</td>
-                      <td>{(coupon.discountRate * 100).toFixed(2)}%</td>
-                      <td>
-                        {coupon.validFrom 
-                          ? new Date(coupon.validFrom).toLocaleString() 
-                          : 'Immediate'}
-                      </td>
-                      <td>
-                        {coupon.validTo 
-                          ? new Date(coupon.validTo).toLocaleString() 
-                          : 'Never'}
-                      </td>
-                      <td>
-                        {coupon.usageLimit === null || coupon.usageLimit === 2147483647
-                          ? 'Unlimited'
-                          : coupon.usageLimit}
-                      </td>
-                      <td>{coupon.usedCount}</td>
-                      <td>{getCouponStatus(coupon)}</td>
-                    </tr>
-                  ))
-                )}
+                {renderTableBody()}
               </tbody>
             </table>
           </div>
