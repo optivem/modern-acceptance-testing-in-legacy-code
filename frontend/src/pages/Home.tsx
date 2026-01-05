@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import { Layout } from '../components';
+import { Layout, FeatureCard } from '../components';
 
 /**
  * Home page component displaying the main landing page
@@ -13,39 +12,27 @@ export function Home() {
         <p className="lead">Your modern e-commerce solution built with Java</p>
         <hr className="my-4" />
         <div className="row mt-4">
-          <div className="col-md-4 mb-3">
-            <div className="card h-100">
-              <div className="card-body">
-                <h5 className="card-title">📦 New Order</h5>
-                <p className="card-text">Place a new order with our easy-to-use interface</p>
-                <Link to="/shop" className="btn btn-primary">
-                  Shop Now
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mb-3">
-            <div className="card h-100">
-              <div className="card-body">
-                <h5 className="card-title">📋 Order History</h5>
-                <p className="card-text">View and manage your past orders</p>
-                <Link to="/order-history" className="btn btn-primary">
-                  View Orders
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mb-3">
-            <div className="card h-100">
-              <div className="card-body">
-                <h5 className="card-title">🎟️ Coupon Management</h5>
-                <p className="card-text">Admin panel for managing discount coupons</p>
-                <Link to="/admin-coupons" className="btn btn-primary">
-                  Manage Coupons
-                </Link>
-              </div>
-            </div>
-          </div>
+          <FeatureCard
+            icon="📦"
+            title="New Order"
+            description="Place a new order with our easy-to-use interface"
+            linkTo="/shop"
+            linkText="Shop Now"
+          />
+          <FeatureCard
+            icon="📋"
+            title="Order History"
+            description="View and manage your past orders"
+            linkTo="/order-history"
+            linkText="View Orders"
+          />
+          <FeatureCard
+            icon="🎟️"
+            title="Coupon Management"
+            description="Admin panel for managing discount coupons"
+            linkTo="/admin-coupons"
+            linkText="Manage Coupons"
+          />
         </div>
       </div>
     </Layout>

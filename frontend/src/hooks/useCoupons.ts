@@ -1,17 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { browseCoupons, createCoupon } from '../services/coupon-service';
 import type { BrowseCouponsItemResponse } from '../types/api.types';
-
-/**
- * Form data structure for coupon creation
- */
-interface CouponFormData {
-  code: string;
-  discountRate: number;
-  validFrom: string;
-  validTo: string;
-  usageLimit: string;
-}
+import type { CouponFormData } from '../components/CouponForm';
 
 /**
  * Custom hook for managing coupons (browsing and creation)
