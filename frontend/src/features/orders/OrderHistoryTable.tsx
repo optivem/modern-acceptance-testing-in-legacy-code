@@ -1,4 +1,15 @@
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  createColumnHelper,
+  flexRender,
+  type SortingState,
+  type ColumnFiltersState,
+} from '@tanstack/react-table';
 import { LoadingSpinner, ErrorMessage } from '../../components';
 import type { BrowseOrderHistoryItemResponse } from '../../types/api.types';
 
@@ -11,32 +22,11 @@ export interface OrderHistoryTableProps {
   onRefresh: () => void;
 }
 
-/**
- * Order table row component
- */
-function OrderRow({ order }: { order: BrowseOrderHistoryItemResponse }) {
-  return (
-    <tr key={order.orderNumber}>
-      <td>{order.orderNumber}</td>
-      <td>{new Date(order.orderTimestamp).toLocaleString()}</td>
-      <td>{order.sku}</td>
-      <td>{order.country}</td>
-      <td>{order.quantity}</td>
-      <td>${order.totalPrice.toFixed(2)}</td>
-      <td className={`status-${order.status}`}>{order.status}</td>
-      <td>{order.appliedCouponCode || 'None'}</td>
-      <td>
-        <Link to={`/order-details/${encodeURIComponent(order.orderNumber)}`}>
-          View Details
-        </Link>
-      </td>
-    </tr>
-  );
-}
+const columnHelper = createColumnHelper<BrowseOrderHistoryItemResponse>();
 
 /**
- * Order history table component for browsing past orders
- * Includes filter input, refresh button, and order listing table
+ * Order history table component using TanStack Table
+ * Includes sorting, filtering, and order listing
  */
 export function OrderHistoryTable({ 
   orders, 
@@ -46,39 +36,82 @@ export function OrderHistoryTable({
   error, 
   onRefresh 
 }: OrderHistoryTableProps) {
-  const renderTableBody = () => {
-    if (isLoading) {
-      return (
-        <tr>
-          <td colSpan={9}>
-            <LoadingSpinner message="Loading orders..." />
-          </td>
-        </tr>
-      );
-    }
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-    if (error) {
-      return (
-        <tr>
-          <td colSpan={9}>
-            <ErrorMessage message={error} onRetry={onRefresh} />
-          </td>
-        </tr>
-      );
-    }
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('orderNumber', {
+        header: 'Order Number',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('orderTimestamp', {
+        header: 'Order Date',
+        cell: (info) => new Date(info.getValue()).toLocaleString(),
+        sortingFn: 'datetime',
+      }),
+      columnHelper.accessor('sku', {
+        header: 'SKU',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('country', {
+        header: 'Country',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('quantity', {
+        header: 'Quantity',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('totalPrice', {
+        header: 'Total Price',
+        cell: (info) => `$${info.getValue().toFixed(2)}`,
+      }),
+      columnHelper.accessor('status', {
+        header: 'Status',
+        cell: (info) => (
+          <span className={`status-${info.getValue()}`}>
+            {info.getValue()}
+          </span>
+        ),
+      }),
+      columnHelper.accessor('appliedCouponCode', {
+        header: 'Coupon',
+        cell: (info) => info.getValue() || 'None',
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: 'Actions',
+        cell: (info) => (
+          <Link to={`/order-details/${encodeURIComponent(info.row.original.orderNumber)}`}>
+            View Details
+          </Link>
+        ),
+      }),
+    ],
+    []
+  );
 
-    if (orders.length === 0) {
-      return (
-        <tr>
-          <td colSpan={9} className="text-center">
-            No orders found
-          </td>
-        </tr>
-      );
-    }
+  // Filter orders by order number
+  const filteredOrders = useMemo(() => {
+    if (!filter) return orders;
+    return orders.filter((order) =>
+      order.orderNumber.toLowerCase().includes(filter.toLowerCase())
+    );
+  }, [orders, filter]);
 
-    return orders.map((order) => <OrderRow key={order.orderNumber} order={order} />);
-  };
+  const table = useReactTable({
+    data: filteredOrders,
+    columns,
+    state: {
+      sorting,
+      columnFilters,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
 
   return (
     <div className="card shadow">
@@ -103,35 +136,70 @@ export function OrderHistoryTable({
           </div>
           <div className="col-md-4 d-flex align-items-end">
             <button
-              className="btn btn-primary w-100"
-              aria-label="Search"
+              className="btn btn-secondary w-100"
               onClick={onRefresh}
+              disabled={isLoading}
+              aria-label="Refresh Order List"
             >
               🔄 Refresh
             </button>
           </div>
         </div>
 
-        <div className="table-responsive">
-          <table className="table table-striped table-hover">
-            <thead className="table-dark">
-              <tr>
-                <th>Order Number</th>
-                <th>Timestamp</th>
-                <th>SKU</th>
-                <th>Country</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Coupon</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {renderTableBody()}
-            </tbody>
-          </table>
-        </div>
+        {isLoading ? (
+          <LoadingSpinner message="Loading orders..." />
+        ) : error ? (
+          <ErrorMessage message={error} onRetry={onRefresh} />
+        ) : (
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
+              <thead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                        style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                      >
+                        <div className="d-flex align-items-center">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {header.column.getIsSorted() && (
+                            <span className="ms-1">
+                              {header.column.getIsSorted() === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.length === 0 ? (
+                  <tr>
+                    <td colSpan={columns.length} className="text-center">
+                      No orders found
+                    </td>
+                  </tr>
+                ) : (
+                  table.getRowModel().rows.map((row) => (
+                    <tr key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
