@@ -7,7 +7,7 @@ import {
   flexRender,
   type SortingState,
 } from '@tanstack/react-table';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { TableDataState } from '../../components';
 import type { BrowseCouponsItemResponse } from '../../types/api.types';
 
 const columnHelper = createColumnHelper<BrowseCouponsItemResponse>();
@@ -96,58 +96,57 @@ export function CouponTable({ coupons, isLoading, getCouponStatus, onRefresh }: 
         </button>
       </div>
       <div className="card-body">
-        {isLoading ? (
-          <LoadingSpinner message="Loading coupons..." />
-        ) : (
-          <div className="table-responsive">
-            <table className="table table-striped table-hover" aria-label="Coupons Table">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
-                      >
-                        <div className="d-flex align-items-center">
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getIsSorted() && (
-                            <span className="ms-1">
-                              {header.column.getIsSorted() === 'asc' ? '↑' : '↓'}
-                            </span>
-                          )}
-                        </div>
-                      </th>
+        <div className="table-responsive">
+          <table className="table table-striped table-hover" aria-label="Coupons Table">
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                    >
+                      <div className="d-flex align-items-center">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getIsSorted() && (
+                          <span className="ms-1">
+                            {header.column.getIsSorted() === 'asc' ? '↑' : '↓'}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {isLoading || table.getRowModel().rows.length === 0 ? (
+                <TableDataState
+                  isLoading={isLoading}
+                  isEmpty={table.getRowModel().rows.length === 0}
+                  colSpan={columns.length}
+                  loadingMessage="Loading coupons..."
+                  emptyMessage="No coupons found"
+                  onRetry={onRefresh}
+                />
+              ) : (
+                table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
                     ))}
                   </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.length === 0 ? (
-                  <tr>
-                    <td colSpan={columns.length} className="text-center">
-                      No coupons found
-                    </td>
-                  </tr>
-                ) : (
-                  table.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

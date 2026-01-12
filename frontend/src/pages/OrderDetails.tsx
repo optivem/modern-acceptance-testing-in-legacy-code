@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Layout, LoadingSpinner, ErrorMessage } from '../components';
+import { Layout, DataState } from '../components';
 import { OrderDetailView, OrderActions } from '../features/orders';
 import { useOrderDetails } from '../hooks';
 import { useNotificationContext } from '../contexts/NotificationContext';
@@ -35,21 +35,25 @@ export function OrderDetails() {
           <h4 className="mb-0">Order Details</h4>
         </div>
         <div className="card-body">
-          {isLoading ? (
-            <LoadingSpinner message="Loading order details..." />
-          ) : error ? (
-            <ErrorMessage message={error} />
-          ) : order ? (
-            <>
-              <OrderDetailView order={order} />
-              <OrderActions 
-                status={order.status}
-                isCancelling={isCancelling}
-                onCancel={handleCancel}
-                onBack={() => navigate('/order-history')}
-              />
-            </>
-          ) : null}
+          <DataState
+            isLoading={isLoading}
+            error={error}
+            isEmpty={!order}
+            loadingMessage="Loading order details..."
+            emptyMessage="Order not found"
+          >
+            {order && (
+              <>
+                <OrderDetailView order={order} />
+                <OrderActions 
+                  status={order.status}
+                  isCancelling={isCancelling}
+                  onCancel={handleCancel}
+                  onBack={() => navigate('/order-history')}
+                />
+              </>
+            )}
+          </DataState>
         </div>
       </div>
     </Layout>
