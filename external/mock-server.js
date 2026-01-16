@@ -123,5 +123,6 @@ server.listen(port, () => {
   console.log(`Tax Health: http://localhost:${port}/tax/health`);
   console.log(`Tax API: http://localhost:${port}/tax/api/countries`);
   console.log(`Clock Health: http://localhost:${port}/clock/health`);
+  console.log(`Clock API: http://localhost:${port}/clock/api/time`);
 });
 
