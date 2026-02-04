@@ -41,11 +41,12 @@ export function useCoupons() {
     setIsCreating(true);
 
     // Convert datetime-local to ISO 8601 string, treating input as UTC
+    // datetime-local format is "YYYY-MM-DDTHH:mm", so add seconds before 'Z'
     const validFrom = formData.validFrom && formData.validFrom.trim()
-      ? formData.validFrom + 'Z'
+      ? formData.validFrom + ':00Z'
       : null;
     const validTo = formData.validTo && formData.validTo.trim()
-      ? formData.validTo + 'Z'
+      ? formData.validTo + ':00Z'
       : null;
 
     const result = await createCoupon(
