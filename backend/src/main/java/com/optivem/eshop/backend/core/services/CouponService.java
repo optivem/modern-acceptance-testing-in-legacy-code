@@ -79,18 +79,6 @@ public class CouponService {
             throwCouponValidationException(MSG_COUPON_CODE_ALREADY_EXISTS, couponCode);
         }
 
-        var currentTime = clockGateway.getCurrentTime();
-        
-        // Validate that validFrom is in the future
-        if (validFrom != null && !validFrom.isAfter(currentTime)) {
-            throw new ValidationException(FIELD_VALID_FROM, MSG_VALID_FROM_MUST_BE_FUTURE);
-        }
-        
-        // Validate that validTo is in the future
-        if (validTo != null && !validTo.isAfter(currentTime)) {
-            throw new ValidationException(FIELD_VALID_TO, MSG_VALID_TO_MUST_BE_FUTURE);
-        }
-
         // If usageLimit is null, set to unlimited (Integer.MAX_VALUE)
         int limit = usageLimit != null ? usageLimit : Integer.MAX_VALUE;
         var coupon = new Coupon(couponCode, discountRate, validFrom, validTo, limit, 0);
