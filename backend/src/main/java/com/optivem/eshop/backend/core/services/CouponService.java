@@ -21,8 +21,8 @@ public class CouponService {
     private static final String MSG_COUPON_EXPIRED = "Coupon code %s has expired";
     private static final String MSG_COUPON_USAGE_LIMIT_REACHED = "Coupon code %s has exceeded its usage limit";
     private static final String MSG_COUPON_CODE_ALREADY_EXISTS = "Coupon code %s already exists";
-    private static final String MSG_VALID_FROM_MUST_BE_FUTURE = "validFrom must be in the future";
-    private static final String MSG_VALID_TO_MUST_BE_FUTURE = "validTo must be in the future";
+    private static final String MSG_VALID_FROM_MUST_BE_FUTURE = "Valid from date cannot be in the past";
+    private static final String MSG_VALID_TO_MUST_BE_FUTURE = "Valid to date cannot be in the past";
 
     private final CouponRepository couponRepository;
     private final ClockGateway clockGateway;
