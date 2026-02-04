@@ -47,7 +47,7 @@ export function OrderHistoryTable({
       }),
       columnHelper.accessor('orderTimestamp', {
         header: 'Order Date',
-        cell: (info) => new Date(info.getValue()).toLocaleString(),
+        cell: (info) => new Date(info.getValue()).toLocaleString('en-US', { timeZone: 'UTC' }),
         sortingFn: 'datetime',
       }),
       columnHelper.accessor('sku', {

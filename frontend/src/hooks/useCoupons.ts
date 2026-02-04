@@ -40,13 +40,12 @@ export function useCoupons() {
     setError(null);
     setIsCreating(true);
 
-    // Convert datetime-local to ISO 8601 string, treating input as UTC
-    // datetime-local format is "YYYY-MM-DDTHH:mm", so add seconds before 'Z'
+    // Convert datetime-local (treating input as UTC) to UTC ISO 8601 string
     const validFrom = formData.validFrom && formData.validFrom.trim()
-      ? formData.validFrom + ':00Z'
+      ? new Date(formData.validFrom + 'Z').toISOString()
       : null;
     const validTo = formData.validTo && formData.validTo.trim()
-      ? formData.validTo + ':00Z'
+      ? new Date(formData.validTo + 'Z').toISOString()
       : null;
 
     const result = await createCoupon(
@@ -70,9 +69,9 @@ export function useCoupons() {
   };
 
   const getCouponStatus = (coupon: BrowseCouponsItemResponse): string => {
-    const now = new Date();
-    const validFrom = coupon.validFrom ? new Date(coupon.validFrom) : null;
-    const validTo = coupon.validTo ? new Date(coupon.validTo) : null;
+    const now = new Date().toISOString(); // Compare in UTC
+    const validFrom = coupon.validFrom ? coupon.validFrom : null;
+    const validTo = coupon.validTo ? coupon.validTo : null;
 
     if (validFrom && now < validFrom) {
       return 'Not Yet Valid';

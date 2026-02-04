@@ -40,7 +40,7 @@ export function CouponTable({ coupons, isLoading, getCouponStatus, onRefresh }: 
         header: 'Valid From',
         cell: (info) => {
           const value = info.getValue();
-          return value ? new Date(value).toLocaleString() : 'Immediate';
+          return value ? new Date(value).toLocaleString('en-US', { timeZone: 'UTC' }) : 'Immediate';
         },
         sortingFn: 'datetime',
       }),
@@ -48,7 +48,7 @@ export function CouponTable({ coupons, isLoading, getCouponStatus, onRefresh }: 
         header: 'Valid To',
         cell: (info) => {
           const value = info.getValue();
-          return value ? new Date(value).toLocaleString() : 'Never';
+          return value ? new Date(value).toLocaleString('en-US', { timeZone: 'UTC' }) : 'Never';
         },
         sortingFn: 'datetime',
       }),

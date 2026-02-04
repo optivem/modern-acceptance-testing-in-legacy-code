@@ -13,7 +13,7 @@ export function OrderDetailView({ order }: OrderDetailViewProps) {
   return (
     <div className="row">
       <DetailField label="Order Number" value={order.orderNumber} ariaLabel="Display Order Number" />
-      <DetailField label="Order Timestamp" value={new Date(order.orderTimestamp).toLocaleString()} ariaLabel="Display Order Timestamp" />
+      <DetailField label="Order Timestamp" value={new Date(order.orderTimestamp).toLocaleString('en-US', { timeZone: 'UTC' })} ariaLabel="Display Order Timestamp" />
       <DetailField 
         label="Status" 
         value={order.status} 
