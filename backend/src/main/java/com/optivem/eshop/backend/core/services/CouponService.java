@@ -14,11 +14,15 @@ import java.util.List;
 public class CouponService {
 
     private static final String FIELD_COUPON_CODE = "couponCode";
+    private static final String FIELD_VALID_FROM = "validFrom";
+    private static final String FIELD_VALID_TO = "validTo";
     private static final String MSG_COUPON_DOES_NOT_EXIST = "Coupon code %s does not exist";
     private static final String MSG_COUPON_NOT_YET_VALID = "Coupon code %s is not yet valid";
     private static final String MSG_COUPON_EXPIRED = "Coupon code %s has expired";
     private static final String MSG_COUPON_USAGE_LIMIT_REACHED = "Coupon code %s has exceeded its usage limit";
     private static final String MSG_COUPON_CODE_ALREADY_EXISTS = "Coupon code %s already exists";
+    private static final String MSG_VALID_FROM_MUST_BE_FUTURE = "validFrom must be in the future";
+    private static final String MSG_VALID_TO_MUST_BE_FUTURE = "validTo must be in the future";
 
     private final CouponRepository couponRepository;
     private final ClockGateway clockGateway;
@@ -73,6 +77,18 @@ public class CouponService {
     public Coupon createCoupon(String couponCode, BigDecimal discountRate, Instant validFrom, Instant validTo, Integer usageLimit) {
         if (couponRepository.findByCode(couponCode).isPresent()) {
             throwCouponValidationException(MSG_COUPON_CODE_ALREADY_EXISTS, couponCode);
+        }
+
+        var currentTime = clockGateway.getCurrentTime();
+        
+        // Validate that validFrom is in the future
+        if (validFrom != null && !validFrom.isAfter(currentTime)) {
+            throw new ValidationException(FIELD_VALID_FROM, MSG_VALID_FROM_MUST_BE_FUTURE);
+        }
+        
+        // Validate that validTo is in the future
+        if (validTo != null && !validTo.isAfter(currentTime)) {
+            throw new ValidationException(FIELD_VALID_TO, MSG_VALID_TO_MUST_BE_FUTURE);
         }
 
         // If usageLimit is null, set to unlimited (Integer.MAX_VALUE)
