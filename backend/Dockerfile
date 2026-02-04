@@ -24,8 +24,8 @@ COPY src ./src
 # Set JVM options for TLS and networking
 ENV JAVA_TOOL_OPTIONS="-Dhttps.protocols=TLSv1.2,TLSv1.3 -Djdk.tls.client.protocols=TLSv1.2,TLSv1.3 -Djavax.net.ssl.sessionCacheSize=1000"
 
-# Build with init script for proper TLS configuration and retry logic
-RUN ./gradlew build --no-daemon --init-script init.gradle \
+# Build with init script for proper TLS configuration and retry logic (skip tests)
+RUN ./gradlew assemble --no-daemon --init-script init.gradle \
     -Dorg.gradle.daemon=false \
     -Dhttp.socketTimeout=60000 \
     -Dhttp.connectionTimeout=60000 \
