@@ -2,6 +2,9 @@ spring:
   jackson:
     deserialization:
       ACCEPT_FLOAT_AS_INT: false
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
+    default-timezone: UTC
+    time-zone: UTC
   datasource:
     url: ${POSTGRES_URL}
     username: ${POSTGRES_USERNAME}
