@@ -23,14 +23,14 @@ interface LayoutProps {
  * @param breadcrumbs - Optional breadcrumb navigation items
  */
 export function Layout({ children, title, breadcrumbs }: LayoutProps) {
-  const { successMessage, error } = useNotificationContext();
+  const { successMessage, error, notificationId } = useNotificationContext();
   
   return (
     <>
       <Navbar title={title} />
       <div className="container mt-4">
         {breadcrumbs && <Breadcrumb items={breadcrumbs} />}
-        <Notification successMessage={successMessage} error={error} />
+        <Notification successMessage={successMessage} error={error} notificationId={notificationId} />
         {children}
       </div>
     </>
