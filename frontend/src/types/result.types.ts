@@ -15,9 +15,15 @@ export type Result<T> =
  * @returns The return value from whichever handler was executed
  * 
  * @example
+ * // Recommended: Use handleResult for automatic notification ID management
+ * handleResult(await submitCoupon(formData), (data) => {
+ *   setSuccess('Created!');
+ * });
+ * 
+ * // Alternative: Direct match usage
  * match(await submitCoupon(formData), {
  *   success: (data) => setSuccess('Created!'),
- *   error: (error) => setError(error)
+ *   error: (error) => setError(error) // setError will auto-increment ID
  * });
  */
 export function match<T, R>(

@@ -51,9 +51,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     clearNotification();
     match(result, {
       success: onSuccess,
-      error: (error) => setError(error)
+      error: setErrorMessage
     });
-  }, [clearNotification]);
+  }, [clearNotification, setErrorMessage]);
 
   return (
     <NotificationContext.Provider value={{

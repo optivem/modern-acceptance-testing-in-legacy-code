@@ -57,9 +57,9 @@ export function useNotification() {
     clearNotification();
     match(result, {
       success: onSuccess,
-      error: (error) => setError(error)
+      error: setErrorMessage
     });
-  }, [clearNotification, setError]);
+  }, [clearNotification, setErrorMessage]);
 
   return {
     successMessage,
