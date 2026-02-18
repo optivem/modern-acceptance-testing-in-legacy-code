@@ -91,6 +91,7 @@ export function CouponTable({ coupons, isLoading, getCouponStatus, onRefresh }: 
           className="btn btn-light btn-sm" 
           onClick={onRefresh}
           disabled={isLoading}
+          aria-label="Refresh Coupon List"
         >
           🔄 Refresh
         </button>
