@@ -49,3 +49,9 @@ tax:
   url: ${TAX_API_URL}
 clock:
   url: ${CLOCK_API_URL}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
