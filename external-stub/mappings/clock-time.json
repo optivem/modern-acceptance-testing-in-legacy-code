@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/api/time"
+    "url": "/clock/api/time"
   },
   "response": {
     "status": 200,
