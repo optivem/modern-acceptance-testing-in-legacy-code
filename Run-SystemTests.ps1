@@ -294,14 +294,8 @@ function Test-System-Selected {
     $TestName = $Test.Name
     $TestCommand = $Test.Command
 
-    if ($script:Test) {
-        if ($TestCommand -match 'gradlew') {
-            $TestCommand += " --tests '*.$($script:Test)'"
-        } elseif ($TestCommand -match 'dotnet') {
-            $TestCommand += " --filter 'DisplayName~$($script:Test)'"
-        } elseif ($TestCommand -match 'playwright') {
-            $TestCommand += " --grep '$($script:Test)'"
-        }
+    if ($script:Test -and $TestConfig.TestFilter) {
+        $TestCommand += " " + $TestConfig.TestFilter.Replace('<test>', $script:Test)
     }
 
     $TestPath = Join-Path $WorkingDirectory $Test.Path
