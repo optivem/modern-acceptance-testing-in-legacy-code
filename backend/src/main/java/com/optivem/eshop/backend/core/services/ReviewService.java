@@ -39,6 +39,11 @@ public class ReviewService {
             throw new ValidationException("Order has not been delivered yet");
         }
 
+        var existingReview = reviewRepository.findByOrderNumber(orderNumber);
+        if (existingReview.isPresent()) {
+            throw new ValidationException("A review has already been submitted for this order");
+        }
+
         var rating = request.getRating();
         if (rating == null || rating < 1 || rating > 5) {
             throw new ValidationException("Rating must be between 1 and 5");
