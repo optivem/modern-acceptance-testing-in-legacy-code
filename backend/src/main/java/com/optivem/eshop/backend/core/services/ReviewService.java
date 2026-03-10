@@ -8,6 +8,7 @@ import com.optivem.eshop.backend.core.exceptions.NotExistValidationException;
 import com.optivem.eshop.backend.core.exceptions.ValidationException;
 import com.optivem.eshop.backend.core.repositories.OrderRepository;
 import com.optivem.eshop.backend.core.repositories.ReviewRepository;
+import com.optivem.eshop.backend.core.services.external.ErpGateway;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,10 +16,12 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final ErpGateway erpGateway;
 
-    public ReviewService(ReviewRepository reviewRepository, OrderRepository orderRepository) {
+    public ReviewService(ReviewRepository reviewRepository, OrderRepository orderRepository, ErpGateway erpGateway) {
         this.reviewRepository = reviewRepository;
         this.orderRepository = orderRepository;
+        this.erpGateway = erpGateway;
     }
 
     public SubmitReviewResponse submitReview(SubmitReviewRequest request) {
@@ -33,7 +36,26 @@ public class ReviewService {
         var order = optionalOrder.get();
 
         if (order.getStatus() != OrderStatus.DELIVERED) {
-            throw new ValidationException("Order must be delivered before a review can be submitted");
+            throw new ValidationException("Order has not been delivered yet");
+        }
+
+        var rating = request.getRating();
+        if (rating == null || rating < 1 || rating > 5) {
+            throw new ValidationException("Rating must be between 1 and 5");
+        }
+
+        var comment = request.getComment();
+        if (comment != null && comment.length() > 500) {
+            throw new ValidationException("Comment must not exceed 500 characters");
+        }
+
+        var sku = order.getSku();
+        var optionalProduct = erpGateway.getProductDetails(sku);
+        if (optionalProduct.isPresent()) {
+            var product = optionalProduct.get();
+            if (product.getReviewable() != null && !product.getReviewable()) {
+                throw new ValidationException("Product is not reviewable");
+            }
         }
 
         var reviewId = generateReviewId();

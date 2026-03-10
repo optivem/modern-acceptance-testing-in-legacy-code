@@ -37,15 +37,13 @@ export function OrderActions({ status, isCancelling, onCancel, isDelivering, onD
           </button>
         </>
       )}
-      {status === OrderStatus.DELIVERED && (
-        <button
-          className="btn btn-success me-2"
-          aria-label="Submit Review"
-          onClick={onSubmitReview}
-        >
-          Submit Review
-        </button>
-      )}
+      <button
+        className="btn btn-success me-2"
+        aria-label="Submit Review"
+        onClick={onSubmitReview}
+      >
+        Submit Review
+      </button>
       <button
         className="btn btn-secondary"
         onClick={onBack}
