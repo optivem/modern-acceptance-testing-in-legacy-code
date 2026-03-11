@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ErrorBoundary } from './components';
 import { NotificationProvider, useNotificationContext } from './contexts/NotificationContext';
-import { Home, Shop, OrderHistory, OrderDetails, SubmitReview, AdminCoupons } from './pages';
+import { Home, Shop, OrderHistory, OrderDetails, AdminCoupons } from './pages';
 
 /**
  * Component that clears notifications on route change
@@ -34,7 +34,6 @@ export function App() {
             <Route path="/shop" element={<Shop />} />
             <Route path="/order-history" element={<OrderHistory />} />
             <Route path="/order-details/:orderNumber" element={<OrderDetails />} />
-            <Route path="/submit-review/:orderNumber" element={<SubmitReview />} />
             <Route path="/admin-coupons" element={<AdminCoupons />} />
           </Routes>
         </BrowserRouter>

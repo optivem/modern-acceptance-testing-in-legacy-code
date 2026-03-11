@@ -6,7 +6,6 @@ export interface OrderActionsProps {
   onCancel: () => void;
   isDelivering: boolean;
   onDeliver: () => void;
-  onSubmitReview: () => void;
   onBack: () => void;
 }
 
@@ -14,7 +13,7 @@ export interface OrderActionsProps {
  * Order actions component for order management buttons
  * Conditionally displays cancel/deliver buttons based on order status
  */
-export function OrderActions({ status, isCancelling, onCancel, isDelivering, onDeliver, onSubmitReview, onBack }: OrderActionsProps) {
+export function OrderActions({ status, isCancelling, onCancel, isDelivering, onDeliver, onBack }: OrderActionsProps) {
   return (
     <div className="mt-4">
       {status === OrderStatus.PLACED && (
@@ -37,13 +36,6 @@ export function OrderActions({ status, isCancelling, onCancel, isDelivering, onD
           </button>
         </>
       )}
-      <button
-        className="btn btn-success me-2"
-        aria-label="Submit Review"
-        onClick={onSubmitReview}
-      >
-        Submit Review
-      </button>
       <button
         className="btn btn-secondary"
         onClick={onBack}

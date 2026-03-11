@@ -27,12 +27,6 @@ export function OrderDetails() {
     });
   }, [deliverOrder, setSuccess, handleResult]);
 
-  const handleSubmitReview = useCallback(() => {
-    if (orderNumber) {
-      navigate(`/submit-review/${orderNumber}`);
-    }
-  }, [orderNumber, navigate]);
-
   return (
     <Layout
       title="Order Details"
@@ -63,7 +57,6 @@ export function OrderDetails() {
                   onCancel={handleCancel}
                   isDelivering={isDelivering}
                   onDeliver={handleDeliver}
-                  onSubmitReview={handleSubmitReview}
                   onBack={() => navigate('/order-history')}
                 />
               </>
