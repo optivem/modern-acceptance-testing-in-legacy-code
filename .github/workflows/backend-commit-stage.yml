@@ -22,8 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      image-digest-url: ${{ steps.publish.outputs.image-digest-url }}
-      image-created-timestamp: ${{ steps.publish.outputs.image-created-timestamp }}
+      image-digest-url: ${{ steps.push.outputs.image-digest-url }}
 
     permissions:
       contents: read
@@ -58,18 +57,23 @@ jobs:
     # - name: Run Linter
     # - name: Run Code Analysis
 
-    - name: Build and Push Artifact
-      id: publish
-      uses: optivem/actions/publish-docker-image@v1
+    - name: Build Docker Image
+      id: build
+      uses: optivem/actions/build-docker-image@v1
       with:
         working-directory: backend
         image-name: backend
-        registry: ghcr.io
-        registry-username: ${{ github.actor }}
         image-namespace: ${{ github.repository }}
-        image-latest-tag: latest
         commit-sha: ${{ github.sha }}
         dockerfile: Dockerfile
+
+    - name: Push Docker Image
+      id: push
+      uses: optivem/actions/push-docker-image@v1
+      with:
+        image-sha-tag: ${{ steps.build.outputs.image-sha-tag }}
+        image-latest-url: ${{ steps.build.outputs.image-latest-url }}
+        registry-username: ${{ github.actor }}
       env:
         REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
