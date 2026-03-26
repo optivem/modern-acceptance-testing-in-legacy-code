@@ -60,7 +60,7 @@ jobs:
 
     - name: Build and Push Artifact
       id: publish
-      uses: optivem/publish-docker-image-action@v1
+      uses: optivem/actions/publish-docker-image@v1
       with:
         working-directory: backend
         image-name: backend
@@ -81,7 +81,7 @@ jobs:
     steps:
       
     - name: Commit Stage Summary
-      uses: optivem/summarize-commit-stage-action@v1
+      uses: optivem/actions/summarize-commit-stage@v1
       with:
         stage-result: ${{ needs.build.result }}
         success-artifact-url: ${{ needs.build.outputs.image-digest-url }}
