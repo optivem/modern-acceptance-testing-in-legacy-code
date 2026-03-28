@@ -137,7 +137,7 @@ public class OrderService {
     public ViewOrderDetailsResponse getOrder(String orderNumber) {
         var optionalOrder = orderRepository.findByOrderNumber(orderNumber);
 
-        if(optionalOrder.isEmpty()) {
+        if (optionalOrder.isEmpty()) {
             throw new NotExistValidationException("Order " + orderNumber + " does not exist.");
         }
 
@@ -170,7 +170,7 @@ public class OrderService {
 
         var optionalOrder = orderRepository.findByOrderNumber(orderNumber);
 
-        if(optionalOrder.isEmpty()) {
+        if (optionalOrder.isEmpty()) {
             throw new NotExistValidationException("Order " + orderNumber + " does not exist.");
         }
 
@@ -187,7 +187,7 @@ public class OrderService {
         if (currentMonthDay.equals(CANCELLATION_RESTRICTED_MONTH_DAY)) {
             var currentTime = now.toLocalTime();
 
-            if(!currentTime.isBefore(CANCELLATION_RESTRICTED_TIME_START) && 
+            if (!currentTime.isBefore(CANCELLATION_RESTRICTED_TIME_START) &&
                 !currentTime.isAfter(CANCELLATION_RESTRICTED_TIME_END)) {
                 throw new ValidationException("Order cancellation is not allowed on December 31st between 22:00 and 23:00");
             }
