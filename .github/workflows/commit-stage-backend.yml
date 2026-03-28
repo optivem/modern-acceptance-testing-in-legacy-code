@@ -33,6 +33,12 @@ jobs:
           DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Check Target Version Exists
+        uses: optivem/actions/check-target-version-exists@v1
+
   run:
     needs: check
     runs-on: ubuntu-latest
