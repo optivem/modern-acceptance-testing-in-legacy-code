@@ -71,7 +71,12 @@ jobs:
     - name: Run Linter
       run: npm run lint
       working-directory: frontend
-    # - name: Run Code Analysis
+    - name: Run Code Analysis
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: npx sonar-scanner -Dsonar.projectKey=optivem_eshop-frontend -Dsonar.organization=optivem -Dsonar.sources=src
+      working-directory: frontend
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     - name: Build Artifact
       if: github.ref == 'refs/heads/main'

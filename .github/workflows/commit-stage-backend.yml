@@ -71,7 +71,12 @@ jobs:
     - name: Run Linter
       run: ./gradlew checkstyleMain
       working-directory: backend
-    # - name: Run Code Analysis
+    - name: Run Code Analysis
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: ./gradlew build sonar --info
+      working-directory: backend
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     - name: Build Artifact
       if: github.ref == 'refs/heads/main'
