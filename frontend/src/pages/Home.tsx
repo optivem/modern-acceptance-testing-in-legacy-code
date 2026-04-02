@@ -2,7 +2,7 @@ import { Layout, FeatureCard } from '../components';
 
 /**
  * Home page component displaying the main landing page
- * Provides navigation to key features: Shop, Order History, and Coupon Management
+ * Provides navigation to key features: New Order, Order History, and Coupon Management
  */
 export function Home() {
   return (
@@ -16,8 +16,8 @@ export function Home() {
             icon="📦"
             title="New Order"
             description="Place a new order with our easy-to-use interface"
-            linkTo="/shop"
-            linkText="Shop Now"
+            linkTo="/new-order"
+            linkText="New Order"
           />
           <FeatureCard
             icon="📋"
