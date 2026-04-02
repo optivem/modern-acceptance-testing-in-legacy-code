@@ -31,10 +31,13 @@ export function OrderForm({ formData, onFormChange, onSubmit, isSubmitting }: Or
           <FormInput
             label="Quantity"
             value={formData.quantityValue}
-            onChange={(e) => onFormChange({ 
-              quantityValue: e.target.value,
-              quantity: parseInt(e.target.value) || 0
-            })}
+            onChange={(e) => {
+              const num = Number(e.target.value);
+              onFormChange({
+                quantityValue: e.target.value,
+                quantity: isNaN(num) ? 0 : num
+              });
+            }}
             inputMode="numeric"
             placeholder="Enter quantity"
             ariaLabel="Quantity"
