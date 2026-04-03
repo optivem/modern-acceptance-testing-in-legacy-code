@@ -32,14 +32,6 @@ export function showNotification(
   }
 
   notificationsDiv.appendChild(notif);
-
-//   if (!isError) {
-//     setTimeout(() => {
-//       if (notif.parentNode) {
-//         notif.remove();
-//       }
-//     }, 5000);
-//   }
 }
 
 /**
