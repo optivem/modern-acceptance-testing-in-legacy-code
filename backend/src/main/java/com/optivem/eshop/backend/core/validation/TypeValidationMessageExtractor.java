@@ -6,6 +6,9 @@ import java.util.Map;
 
 public class TypeValidationMessageExtractor {
 
+    private TypeValidationMessageExtractor() {
+    }
+
     public static Map<String, String> extractFieldMessages(Class<?> clazz) {
         Map<String, String> fieldMessages = new HashMap<>();
 
@@ -20,4 +23,3 @@ public class TypeValidationMessageExtractor {
         return fieldMessages;
     }
 }
-

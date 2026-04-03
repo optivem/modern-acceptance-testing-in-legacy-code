@@ -131,12 +131,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                    org.springframework.http.HttpHeaders headers,
                                                                    org.springframework.http.HttpStatusCode status,
                                                                    org.springframework.web.context.request.WebRequest request) {
-        System.out.println("=== HttpMessageNotReadableException ===");
-        System.out.println("Message: " + ex.getMessage());
         log.error("HttpMessageNotReadableException: {}", ex.getMessage(), ex);
-        
+
         if (ex.getCause() != null) {
-            System.out.println("Cause: " + ex.getCause().getMessage());
             log.error("Root cause: {}", ex.getCause().getMessage(), ex.getCause());
         }
 
@@ -223,9 +220,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGeneralException(Exception ex) {
-        System.out.println("=== General Exception ===");
-        System.out.println("Type: " + ex.getClass().getName());
-        System.out.println("Message: " + ex.getMessage());
         log.error("Unexpected error occurred", ex);
 
         // Log the full cause chain

@@ -14,16 +14,11 @@ import java.util.List;
 public class CouponService {
 
     private static final String FIELD_COUPON_CODE = "couponCode";
-    private static final String FIELD_VALID_FROM = "validFrom";
-    private static final String FIELD_VALID_TO = "validTo";
     private static final String MSG_COUPON_DOES_NOT_EXIST = "Coupon code %s does not exist";
     private static final String MSG_COUPON_NOT_YET_VALID = "Coupon code %s is not yet valid";
     private static final String MSG_COUPON_EXPIRED = "Coupon code %s has expired";
     private static final String MSG_COUPON_USAGE_LIMIT_REACHED = "Coupon code %s has exceeded its usage limit";
     private static final String MSG_COUPON_CODE_ALREADY_EXISTS = "Coupon code %s already exists";
-    private static final String MSG_VALID_FROM_MUST_BE_FUTURE = "Valid from date cannot be in the past";
-    private static final String MSG_VALID_TO_MUST_BE_FUTURE = "Valid to date cannot be in the past";
-
     private final CouponRepository couponRepository;
     private final ClockGateway clockGateway;
 

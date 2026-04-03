@@ -47,8 +47,6 @@ public class OrderService {
         var country = request.getCountry();
         var couponCode = request.getCouponCode();
 
-        System.out.println("Placing order for SKU: " + sku + ", quantity: " + quantity + ", country: " + country);
-
         var orderTimestamp = clockGateway.getCurrentTime();
         var unitPrice = getUnitPrice(sku);
         var discountRate = getDiscountRate(couponCode);
@@ -127,7 +125,7 @@ public class OrderService {
                     response.setAppliedCouponCode(order.getAppliedCouponCode());
                     return response;
                 })
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
                 
         var result = new BrowseOrderHistoryResponse();
         result.setOrders(items);
@@ -182,7 +180,6 @@ public class OrderService {
 
         var now = LocalDateTime.ofInstant(clockGateway.getCurrentTime(), ZoneId.of("UTC"));
         var currentMonthDay = MonthDay.from(now);
-
 
         if (currentMonthDay.equals(CANCELLATION_RESTRICTED_MONTH_DAY)) {
             var currentTime = now.toLocalTime();

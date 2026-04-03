@@ -21,7 +21,6 @@ public class TaxGateway {
 
     public Optional<TaxDetailsResponse> getTaxDetails(String country) {
         var url = taxUrl + "/api/countries/" + country;
-        System.out.println("getTaxDetails - url: " + url);
 
         try {
             var httpClient = HttpClient.newBuilder()
@@ -36,24 +35,24 @@ public class TaxGateway {
 
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("getTaxDetails - status code was: " + response.statusCode());
-
             if (response.statusCode() == 404) {
-                System.out.println("getTaxDetails - status code was 404");
-                return Optional.empty();  // Country not found
+                return Optional.empty();
             }
 
             if (response.statusCode() != 200) {
-                throw new RuntimeException("Tax API returned status " + response.statusCode() +
+                throw new IllegalStateException("Tax API returned status " + response.statusCode() +
                         " for country: " + country + ". URL: " + url + ". Response: " + response.body());
             }
 
             var result = OBJECT_MAPPER.readValue(response.body(), TaxDetailsResponse.class);
             return Optional.of(result);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Failed to fetch tax details for country: " + country +
+                    " from URL: " + url + ". Error: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch tax details for country: " + country +
+            throw new IllegalStateException("Failed to fetch tax details for country: " + country +
                     " from URL: " + url + ". Error: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
         }
     }
 }
-

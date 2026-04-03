@@ -25,14 +25,13 @@ public class ClockGateway {
     private String clockUrl;
 
     public Instant getCurrentTime() {
-        System.out.println("External system mode: " + externalSystemMode);
 
         if ("real".equals(externalSystemMode)) {
             return getRealTime();
         } else if ("stub".equals(externalSystemMode)) {
             return getStubTime();
         } else {
-            throw new RuntimeException("Unknown external system mode: " + externalSystemMode);
+            throw new IllegalStateException("Unknown external system mode: " + externalSystemMode);
         }
     }
 
@@ -56,14 +55,18 @@ public class ClockGateway {
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                throw new RuntimeException("Clock API returned status " + response.statusCode() +
+                throw new IllegalStateException("Clock API returned status " + response.statusCode() +
                         ". URL: " + url + ". Response: " + response.body());
             }
 
             var clockResponse = OBJECT_MAPPER.readValue(response.body(), GetTimeResponse.class);
             return clockResponse.getTime();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Failed to fetch current time from URL: " + clockUrl +
+                    ". Error: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch current time from URL: " + clockUrl +
+            throw new IllegalStateException("Failed to fetch current time from URL: " + clockUrl +
                     ". Error: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
         }
     }
