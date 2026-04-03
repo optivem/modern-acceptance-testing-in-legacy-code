@@ -41,10 +41,10 @@ export function useCoupons() {
     setIsCreating(true);
 
     // Convert datetime-local (treating input as UTC) to UTC ISO 8601 string
-    const validFrom = formData.validFrom && formData.validFrom.trim()
+    const validFrom = formData.validFrom?.trim()
       ? new Date(formData.validFrom + 'Z').toISOString()
       : null;
-    const validTo = formData.validTo && formData.validTo.trim()
+    const validTo = formData.validTo?.trim()
       ? new Date(formData.validTo + 'Z').toISOString()
       : null;
 
