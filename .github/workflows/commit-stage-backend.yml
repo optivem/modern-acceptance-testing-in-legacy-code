@@ -77,13 +77,6 @@ jobs:
     - name: Run Linter
       run: ./gradlew checkstyleMain
       working-directory: backend
-    - name: Run Code Analysis
-      if: github.ref == 'refs/heads/main'
-      run: ./gradlew build sonar --info
-      working-directory: backend
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
     - name: Read Target Version
       if: github.ref == 'refs/heads/main'
       id: read-version

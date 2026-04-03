@@ -77,19 +77,6 @@ jobs:
     - name: Run Linter
       run: npm run lint
       working-directory: frontend
-    - name: Run Code Analysis
-      if: github.ref == 'refs/heads/main'
-      uses: SonarSource/sonarcloud-github-action@v5
-      with:
-        projectBaseDir: frontend
-        args: >
-          -Dsonar.projectKey=optivem_eshop-frontend
-          -Dsonar.projectName=eshop-frontend
-          -Dsonar.organization=optivem
-          -Dsonar.sources=src
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
     - name: Read Target Version
       if: github.ref == 'refs/heads/main'
       id: read-version

@@ -2,8 +2,7 @@ plugins {
 	id 'java'
 	id 'checkstyle'
 	id 'jacoco'
-	id 'org.sonarqube' version '7.2.3.7755'
-	id 'org.springframework.boot' version '3.3.5'
+id 'org.springframework.boot' version '3.3.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -51,15 +50,6 @@ jacocoTestReport {
 	dependsOn test
 	reports {
 		xml.required = true
-	}
-}
-
-sonar {
-	properties {
-		property 'sonar.projectKey', 'optivem_eshop-backend'
-		property 'sonar.projectName', 'eshop-backend'
-		property 'sonar.organization', 'optivem'
-		property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
 	}
 }
 
