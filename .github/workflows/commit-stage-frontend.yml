@@ -84,6 +84,7 @@ jobs:
         projectBaseDir: frontend
         args: >
           -Dsonar.projectKey=optivem_eshop-frontend
+          -Dsonar.projectName=eshop-frontend
           -Dsonar.organization=optivem
           -Dsonar.sources=src
       env:
