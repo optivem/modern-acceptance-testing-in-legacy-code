@@ -5,6 +5,8 @@ param(
     [string]$Suite,
     [string]$Test,
 
+    [switch]$Sample,
+
     [switch]$Rebuild,
     [switch]$Restart,
     [switch]$SkipTests,
@@ -296,6 +298,10 @@ function Test-System-Selected {
 
     if ($script:Test -and $TestConfig.TestFilter) {
         $TestCommand += " " + $TestConfig.TestFilter.Replace('<test>', $script:Test)
+    }
+
+    if ($script:Sample -and $Test.SampleTest -and $TestConfig.TestFilter) {
+        $TestCommand += " " + $TestConfig.TestFilter.Replace('<test>', $Test.SampleTest)
     }
 
     $TestPath = Join-Path $WorkingDirectory $Test.Path
