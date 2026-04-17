@@ -1,3 +1,5 @@
+> **This repository is archived.** See [optivem/starter](https://github.com/optivem/starter) for the active project.
+
 # eShop System
 
 [![frontend-commit-stage](https://github.com/optivem/eshop/actions/workflows/frontend-commit-stage.yml/badge.svg)](https://github.com/optivem/eshop/actions/workflows/frontend-commit-stage.yml)
