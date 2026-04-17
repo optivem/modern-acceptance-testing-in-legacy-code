@@ -1,4 +1,4 @@
-> **This repository is archived.** See [optivem/starter](https://github.com/optivem/starter) for the active project.
+> **This repository is archived.** See [optivem/shop](https://github.com/optivem/shop) for the active project.
 
 # eShop System
 
